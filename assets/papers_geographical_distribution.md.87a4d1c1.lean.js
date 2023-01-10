@@ -1,1 +1,0 @@
-import{_ as e,c as t,o as a}from"./app.a00e0097.js";const l=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"papers/geographical_distribution.md"}'),r={name:"papers/geographical_distribution.md"};function o(i,s,c,n,p,_){return a(),t("div")}const m=e(r,[["render",o]]);export{l as __pageData,m as default};
