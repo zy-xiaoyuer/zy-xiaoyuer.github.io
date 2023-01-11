@@ -1,0 +1,1 @@
+import{_ as e,c as t,o as a,a as o}from"./app.7ed3d153.js";const f=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"views/articles/backEnd/other.md"}'),s={name:"views/articles/backEnd/other.md"},r=o("p",null,"other",-1),c=[r];function n(i,_,d,l,p,h){return a(),t("div",null,c)}const u=e(s,[["render",n]]);export{f as __pageData,u as default};

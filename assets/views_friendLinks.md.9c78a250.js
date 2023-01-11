@@ -1,0 +1,1 @@
+import{_ as e,c as t,o as s,a as n}from"./app.7ed3d153.js";const k=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"views/friendLinks.md"}'),a={name:"views/friendLinks.md"},r=n("p",null,"friendLinks",-1),o=[r];function i(c,d,_,p,f,l){return s(),t("div",null,o)}const u=e(a,[["render",i]]);export{k as __pageData,u as default};
