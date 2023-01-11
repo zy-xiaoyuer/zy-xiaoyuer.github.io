@@ -1,0 +1,1 @@
+import{_ as t,c as e,o as s,a}from"./app.c50340e4.js";const h=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"views/articles/frontEnd/html.md"}'),o={name:"views/articles/frontEnd/html.md"},n=a("p",null,"html",-1),r=[n];function c(l,i,_,d,m,p){return s(),e("div",null,r)}const u=t(o,[["render",c]]);export{h as __pageData,u as default};
