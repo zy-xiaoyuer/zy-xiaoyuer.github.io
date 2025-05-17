@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最近上传 - 时光胶囊</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #83CAE4;
+            --light-blue: #E5F4FB;
+            --border-color: #B3E0F2;
+            --text-color: #5A7A8C;
+            --text-light: #83a7b4;
+            --white: #FFFFFF;
+        }
+
+        body {
+            font-family: 'SimHei', 'Microsoft YaHei', sans-serif;
+            background-color: var(--light-blue);
+            margin: 0;
+            padding: 20px 20px 20px 240px;
+            color: var(--text-color);
+        }
+
+        /* 导航栏样式 */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 220px;
+            height: 100%;
+            background: var(--white);
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            z-index: 1000;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            margin-bottom: 30px;
+        }
+
+        .nav-logo-icon {
+            color: var(--primary-color);
+            font-size: 2em;
+            margin-right: 10px;
+        }
+
+        .nav-logo-text {
+            font-size: 1.5em;
+            color: var(--text-color);
+            font-weight: normal;
+        }
+
+        .nav-list {
+            display: flex;
+            flex-direction: column;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-item {
+            margin: 5px 0;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            padding: 12px 25px;
+            transition: all 0.3s ease;
+            border-radius: 0;
+            margin: 0;
+        }
+
+        .nav-link.active {
+            background-color: #E5F4FB;
+            color: var(--primary-color);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .nav-link:hover {
+            background-color: #F5FBFE;
+            color: var(--primary-color);
+        }
+
+        .nav-link i {
+            font-size: 1.2em;
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .create-btn {
+            margin-top: auto;
+            margin-bottom: 20px;
+            padding: 0 20px;
+        }
+
+        .create-memory-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 85%;
+            padding: 10px;
+            background: linear-gradient(135deg, #83CAE4, #5EAED5);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 auto;
+        }
+
+        .create-memory-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(131,202,228,0.3);
+        }
+
+        .create-memory-btn i {
+            margin-right: 8px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-top: 1px solid #E5F4FB;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #E5F4FB;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: var(--primary-color);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-size: 0.9em;
+            color: var(--text-color);
+        }
+
+        .user-desc {
+            font-size: 0.75em;
+            color: var(--text-light);
+        }
+
+        /* 主要内容样式 */
+        .main-content {
+            max-width: 1000px;
+            margin: 40px auto;
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            padding: 30px;
+        }
+
+        .page-title {
+            color: var(--primary-color);
+            font-size: 2em;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #E5F4FB;
+        }
+
+        /* 照片详情样式 */
+        .photo-detail {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .photo-container {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .photo-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .photo-info {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .photo-title {
+            font-size: 1.5em;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+
+        .photo-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .photo-meta-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.9em;
+            color: var(--text-light);
+        }
+
+        .photo-meta-item i {
+            margin-right: 5px;
+        }
+
+        .photo-description {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .photo-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .photo-tag {
+            background: var(--light-blue);
+            color: var(--text-color);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .photo-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .photo-action-btn {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .primary-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+        }
+
+        .primary-btn:hover {
+            background: #6BABC4;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(131,202,228,0.3);
+        }
+
+        .secondary-btn {
+            background: var(--white);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .secondary-btn:hover {
+            background: #F5FBFE;
+            color: var(--primary-color);
+        }
+
+        .photo-action-btn i {
+            margin-right: 8px;
+        }
+
+        /* 相关照片样式 */
+        .related-photos {
+            margin-top: 50px;
+        }
+
+        .related-title {
+            font-size: 1.3em;
+            color: var(--text-color);
+            margin-bottom: 20px;
+        }
+
+        .related-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .related-item {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .related-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+
+        .related-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .related-info {
+            padding: 10px;
+        }
+
+        .related-name {
+            font-size: 0.9em;
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+
+        .related-date {
+            font-size: 0.8em;
+            color: var(--text-light);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+
+            .nav-bar {
+                display: none;
+            }
+
+            .photo-detail {
+                flex-direction: column;
+            }
+
+            .photo-container, .photo-info {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="nav-bar">
+        <div class="nav-logo">
+            <i class="nav-logo-icon fas fa-hourglass-half"></i>
+            <span class="nav-logo-text">时光胶囊</span>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>首页</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="theme-albums.html" class="nav-link">
+                    <i class="fas fa-eye"></i>
+                    <span>主题相册</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="time-albums.html" class="nav-link">
+                    <i class="fas fa-plus"></i>
+                    <span>时间相册</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="favorites.html" class="nav-link">
+                    <i class="fas fa-heart"></i>
+                    <span>我的收藏</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="about.html" class="nav-link">
+                    <i class="fas fa-info-circle"></i>
+                    <span>关于我们</span>
+                </a>
+            </li>
+        </ul>
+        <div class="create-btn">
+            <a href="upload.html" class="create-memory-btn">
+                <i class="fas fa-plus"></i>
+                上传照片
+            </a>
+        </div>
+        <div class="user-profile">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="user-info">
+                <div class="user-name">用户名</div>
+                <div class="user-desc">查看个人资料</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <div class="main-content">
+        <h1 class="page-title">最近上传的照片</h1>
+        
+        <div

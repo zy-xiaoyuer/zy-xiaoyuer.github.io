@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于我们 - 给你一颗时光胶囊</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #83CAE4;
+            --light-blue: #E5F4FB;
+            --border-color: #B3E0F2;
+            --text-color: #5A7A8C;
+            --text-light: #83a7b4;
+            --white: #FFFFFF;
+        }
+
+        body {
+            font-family: 'SimHei', 'Microsoft YaHei', sans-serif;
+            background-color: var(--light-blue);
+            margin: 0;
+            padding: 20px 20px 20px 240px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* 导航栏样式 */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 220px;
+            height: 100%;
+            background: var(--white);
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            z-index: 1000;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            margin-bottom: 30px;
+        }
+
+        .nav-logo-icon {
+            color: var(--primary-color);
+            font-size: 2em;
+            margin-right: 10px;
+        }
+
+        .nav-logo-text {
+            font-size: 1.5em !important;
+            color: var(--text-color);
+            font-weight: normal;
+        }
+
+        .nav-list {
+            display: flex;
+            flex-direction: column;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-item {
+            margin: 5px 0;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            padding: 12px 25px;
+            transition: all 0.3s ease;
+            border-radius: 0;
+            margin: 0;
+        }
+
+        .nav-link.active {
+            background-color: #E5F4FB;
+            color: var(--primary-color);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .nav-link:hover {
+            background-color: #F5FBFE;
+            color: var(--primary-color);
+        }
+
+        .nav-link i {
+            font-size: 1.2em;
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .create-btn {
+            margin-top: auto;
+            margin-bottom: 20px;
+            padding: 0 20px;
+        }
+
+        .create-memory-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 85%;
+            padding: 10px;
+            background: linear-gradient(135deg, #83CAE4, #5EAED5);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 auto;
+        }
+
+        .create-memory-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(131,202,228,0.3);
+        }
+
+        .create-memory-btn i {
+            margin-right: 8px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-top: 1px solid #E5F4FB;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #E5F4FB;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: var(--primary-color);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-size: 0.9em;
+            color: var(--text-color);
+        }
+
+        .user-desc {
+            font-size: 0.75em;
+            color: var(--text-light);
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 30px;
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        /* 关于我们页面特定样式 */
+        .page-title {
+            font-size: 2em;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .page-title:after {
+            content: "";
+            position: absolute;
+            width: 50%;
+            height: 3px;
+            background: var(--primary-color);
+            bottom: -10px;
+            left: 25%;
+        }
+
+        .about-section {
+            margin-bottom: 40px;
+        }
+
+        .about-subtitle {
+            font-size: 1.5em;
+            color: var(--text-color);
+            margin: 30px 0 15px;
+        }
+
+        .about-company {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 30px;
+        }
+
+        .company-logo {
+            width: 180px;
+            height: 180px;
+            background-color: var(--light-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 30px;
+            border-radius: 10px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .company-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .company-logo i {
+            font-size: 4em;
+            color: var(--primary-color);
+        }
+
+        .company-info p {
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .mission-vision {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .mission-box, .vision-box {
+            background-color: var(--light-blue);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+
+        .box-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            font-size: 1.3em;
+        }
+
+        .box-title i {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .team-members {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .team-member {
+            background-color: var(--light-blue);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .team-member:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(131,202,228,0.3);
+        }
+
+        .member-photo {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .member-info {
+            padding: 15px;
+        }
+
+        .member-name {
+            font-size: 1.2em;
+            color: var(--text-color);
+            margin: 0 0 5px 0;
+        }
+
+        .member-role {
+            font-size: 0.9em;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .member-bio {
+            font-size: 0.9em;
+            color: var(--text-light);
+        }
+
+        .contact-form {
+            background-color: var(--light-blue);
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-color);
+            font-weight: bold;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1em;
+            color: var(--text-color);
+            background-color: var(--white);
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(131,202,228,0.25);
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #83CAE4, #5EAED5);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(131,202,228,0.3);
+        }
+
+        .contact-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-right: 30px;
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--light-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: var(--primary-color);
+        }
+
+        .contact-text {
+            color: var(--text-color);
+        }
+
+        @media (max-width: 1024px) {
+            .mission-vision {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+
+            .nav-bar {
+                display: none;
+            }
+
+            .about-company {
+                flex-direction: column;
+            }
+
+            .company-logo {
+                margin: 0 auto 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="nav-bar">
+        <div class="nav-logo">
+            <i class="nav-logo-icon fas fa-hourglass-half"></i>
+            <span class="nav-logo-text">时光胶囊</span>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>首页</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="my-uploads.html?type=theme" class="nav-link">
+                    <i class="fas fa-eye"></i>
+                    <span>主题相册</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="time-albums.html" class="nav-link">
+                    <i class="fas fa-plus"></i>
+                    <span>时间相册</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="favorites.html" class="nav-link">
+                    <i class="fas fa-heart"></i>
+                    <span>我的收藏</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="about.html" class="nav-link active">
+                    <i class="fas fa-info-circle"></i>
+                    <span>关于我们</span>
+                </a>
+            </li>
+        </ul>
+        <div class="create-btn">
+            <a href="upload.html" class="create-memory-btn" onclick="event.preventDefault(); window.location.href='upload.html';">
+                <i class="fas fa-plus"></i>
+                上传照片
+            </a>
+        </div>
+        <div class="user-profile">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="user-info">
+                <div class="user-name">用户名</div>
+                <div class="user-desc">查看个人资料</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区域 -->
+    <div class="main-content">
+        <h1 class="page-title">关于我们</h1>
+        
+        <!-- 公司简介 -->
+        <div class="about-section">
+            <div class="about-company">
+                <div class="company-logo">
+                    <i class="fas fa-hourglass-half"></i>
+                </div>
+                <div class="company-info">
+                    <p>时光胶囊是一家致力于帮助人们捕捉和珍藏珍贵回忆的创新企业。我们的平台让用户能够以一种独特而有意义的方式存储和组织他们的照片和记忆。</p>
+                    <p>成立于2020年，我们的团队由一群热爱摄影和技术的专业人士组成，他们共同的目标是创建一个既简单又强大的工具，帮助人们记录生活中的重要时刻。</p>
+                    <p>我们相信每张照片背后都有一个故事，每个记忆都值得被保存和分享。通过时光胶囊，我们希望这些珍贵的瞬间能够永远保持鲜活，供用户随时回顾。</p>
+                </div>
+            </div>
+            
+            <div class="mission-vision">
+                <div class="mission-box">
+                    <div class="box-title">
+                        <i class="fas fa-bullseye"></i>
+                        <span>我们的使命</span>
+                    </div>
+                    <p>为用户提供一个简单而强大的平台，让他们能够轻松地存储、组织和分享生活中的珍贵时刻，使这些记忆永不褪色。</p>
+                </div>
+                <div class="vision-box">
+                    <div class="box-title">
+                        <i class="fas fa-eye"></i>
+                        <span>我们的愿景</span>
+                    </div>
+                    <p>成为全球领先的记忆管理平台，帮助数百万人保存他们的人生故事，并连接不同世代间的情感纽带。</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 团队成员 -->
+        <div class="about-section">
+            <h2 class="about-subtitle">我们的团队</h2>
+            <p>我们的团队由充满激情和创造力的专业人士组成，他们致力于为用户提供最佳的记忆存储体验。</p>
+            
+            <div class="team-members">
+                <!-- 团队成员1 -->
+                <div class="team-member">
+                    <img src="https://picsum.photos/400/300?random=201" alt="创始人照片" class="member-photo">
+                    <div class="member-info">
+                        <h3 class="member-name">张明</h3>
+                        <div class="member-role">创始人 & CEO</div>
+                        <p class="member-bio">摄影爱好者和技术专家，拥有10年互联网产品开发经验。热衷于将技术与艺术结合，为用户创造有意义的产品。</p>
+                    </div>
+                </div>
+                
+                <!-- 团队成员2 -->
+                <div class="team-member">
+                    <img src="https://picsum.photos/400/300?random=202" alt="设计总监照片" class="member-photo">
+                    <div class="member-info">
+                        <h3 class="member-name">李华</h3>
+                        <div class="member-role">设计总监</div>
+                        <p class="member-bio">毕业于中央美术学院，拥有丰富的UI/UX设计经验。专注于创造简洁、美观且用户友好的界面。</p>
+                    </div>
+                </div>
+                
+                <!-- 团队成员3 -->
+                <div class="team-member">
+                    <img src="https://picsum.photos/400/300?random=203" alt="技术负责人照片" class="member-photo">
+                    <div class="member-info">
+                        <h3 class="member-name">王强</h3>
+                        <div class="member-role">技术负责人</div>
+                        <p class="member-bio">全栈开发者，热爱解决复杂问题。之前在多家科技公司担任技术领导角色，专注于构建可扩展且高性能的系统。</p>
+                    </div>
+                </div>
+                
+                <!-- 团队成员4 -->
+                <div class="team-member">
+                    <img src="https://picsum.photos/400/300?random=204" alt="市场总监照片" class="member-photo">
+                    <div class="member-info">
+                        <h3 class="member-name">陈丽</h3>
+                        <div class="member-role">市场总监</div>
+                        <p class="member-bio">营销专家，擅长品牌建设和用户增长策略。相信优质产品结合有效营销能创造出真正的用户价值。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 联系我们 -->
+        <div class="about-section">
+            <h2 class="about-subtitle">联系我们</h2>
+            <p>无论您有任何疑问、建议或合作意向，我们都很乐意听取您的声音。请通过以下方式联系我们：</p>
+            
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="contact-text">contact@timecapsule.com</div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="contact-text">+86 10 8888 7777</div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="contact-text">北京市海淀区科技园区88号</div>
+                </div>
+            </div>
+            
+            <!-- 联系表单 -->
+            <div class="contact-form">
+                <h3 class="about-subtitle">给我们留言</h3>
+                <form>
+                    <div class="form-group">
+                        <label for="name" class="form-label">您的姓名</label>
+                        <input type="text" id="name" class="form-control" placeholder="请输入您的姓名" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email" class="form-label">电子邮箱</label>
+                        <input type="email" id="email" class="form-control" placeholder="请输入您的邮箱" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject" class="form-label">主题</label>
+                        <input type="text" id="subject" class="form-control" placeholder="请输入留言主题">
+                    </div>
+                    <div class="form-group">
+                        <label for="message" class="form-label">留言内容</label>
+                        <textarea id="message" class="form-control" placeholder="请输入您的留言内容" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-paper-plane"></i>
+                        发送留言
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 表单提交功能
+        const contactForm = document.querySelector('.contact-form form');
+        
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 获取表单数据
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+            
+            // 在实际应用中，这里可以发送数据到服务器
+            // 这里仅作演示
+            alert(`谢谢您的留言，${name}！我们会尽快回复您。`);
+            
+            // 重置表单
+            this.reset();
+        });
+    </script>
+</body>
+</html> 

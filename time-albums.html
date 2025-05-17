@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时间相册 - 给你一颗时光胶囊</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #83CAE4;
+            --light-blue: #E5F4FB;
+            --border-color: #B3E0F2;
+            --text-color: #5A7A8C;
+            --text-light: #83a7b4;
+            --white: #FFFFFF;
+        }
+
+        body {
+            font-family: 'SimHei', 'Microsoft YaHei', sans-serif;
+            background-color: var(--light-blue);
+            margin: 0;
+            padding: 20px 20px 20px 240px;
+            color: var(--text-color);
+        }
+
+        /* 导航栏样式 */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 220px;
+            height: 100%;
+            background: var(--white);
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            z-index: 1000;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            margin-bottom: 30px;
+        }
+
+        .nav-logo-icon {
+            color: var(--primary-color);
+            font-size: 2em;
+            margin-right: 10px;
+        }
+
+        .nav-logo-text {
+            font-size: 1.5em !important;
+            color: var(--text-color);
+            font-weight: normal;
+        }
+
+        .nav-list {
+            display: flex;
+            flex-direction: column;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-item {
+            margin: 5px 0;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            padding: 12px 25px;
+            transition: all 0.3s ease;
+            border-radius: 0;
+            margin: 0;
+        }
+
+        .nav-link.active {
+            background-color: #E5F4FB;
+            color: var(--primary-color);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .nav-link:hover {
+            background-color: #F5FBFE;
+            color: var(--primary-color);
+        }
+
+        .nav-link i {
+            font-size: 1.2em;
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .create-btn {
+            margin-top: auto;
+            margin-bottom: 20px;
+            padding: 0 20px;
+        }
+
+        .create-memory-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 85%;
+            padding: 10px;
+            background: linear-gradient(135deg, #83CAE4, #5EAED5);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 auto;
+        }
+
+        .create-memory-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(131,202,228,0.3);
+        }
+
+        .create-memory-btn i {
+            margin-right: 8px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-top: 1px solid #E5F4FB;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #E5F4FB;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: var(--primary-color);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-size: 0.9em;
+            color: var(--text-color);
+        }
+
+        .user-desc {
+            font-size: 0.75em;
+            color: var(--text-light);
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 30px;
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        /* 时间相册页面特定样式 */
+        .page-title {
+            font-size: 2em;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .page-title:after {
+            content: "";
+            position: absolute;
+            width: 50%;
+            height: 3px;
+            background: var(--primary-color);
+            bottom: -10px;
+            left: 25%;
+        }
+
+        /* 时间线样式 */
+        .time-filter {
+            display: flex;
+            margin: 30px 0;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            gap: 10px;
+        }
+
+        .time-tag {
+            padding: 8px 15px;
+            background-color: var(--light-blue);
+            color: var(--text-color);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .time-tag:hover, .time-tag.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .year-section {
+            margin-bottom: 50px;
+        }
+
+        .year-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .year-title {
+            font-size: 1.5em;
+            color: var(--text-color);
+            margin: 0;
+            padding-right: 15px;
+        }
+
+        .year-line {
+            flex-grow: 1;
+            height: 2px;
+            background-color: var(--border-color);
+        }
+
+        /* 相册网格 */
+        .album-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .album-card {
+            background: var(--white);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            border: 1px solid var(--border-color);
+        }
+
+        .album-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(131,202,228,0.3);
+        }
+
+        .album-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .album-details {
+            padding: 15px;
+        }
+
+        .album-title {
+            font-size: 1.2em;
+            color: var(--text-color);
+            margin: 0 0 5px 0;
+        }
+
+        .album-date {
+            font-size: 0.8em;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+
+        .photo-count {
+            display: flex;
+            align-items: center;
+            font-size: 0.8em;
+            color: var(--text-light);
+            margin-top: 10px;
+        }
+
+        .photo-count i {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="nav-bar">
+        <div class="nav-logo">
+            <i class="nav-logo-icon fas fa-hourglass-half"></i>
+            <span class="nav-logo-text">时光胶囊</span>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>首页</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="my-uploads.html?type=theme" class="nav-link">
+                    <i class="fas fa-eye"></i>
+                    <span>主题相册</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="time-albums.html" class="nav-link active">
+                    <i class="fas fa-plus"></i>
+                    <span>时间相册</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="favorites.html" class="nav-link">
+                    <i class="fas fa-heart"></i>
+                    <span>我的收藏</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="about.html" class="nav-link">
+                    <i class="fas fa-info-circle"></i>
+                    <span>关于我们</span>
+                </a>
+            </li>
+        </ul>
+        <div class="create-btn">
+            <a href="upload.html" class="create-memory-btn" onclick="event.preventDefault(); window.location.href='upload.html';">
+                <i class="fas fa-plus"></i>
+                上传照片
+            </a>
+        </div>
+        <div class="user-profile">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="user-info">
+                <div class="user-name">用户名</div>
+                <div class="user-desc">查看个人资料</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区域 -->
+    <div class="main-content">
+        <h1 class="page-title">时间相册</h1>
+        
+        <!-- 时间过滤器 -->
+        <div class="time-filter">
+            <div class="time-tag active">全部时间</div>
+            <div class="time-tag">2023年</div>
+            <div class="time-tag">2022年</div>
+            <div class="time-tag">2021年</div>
+            <div class="time-tag">2020年</div>
+            <div class="time-tag">2019年</div>
+            <div class="time-tag">2018年</div>
+            <div class="time-tag">2017年</div>
+            <div class="time-tag">更早</div>
+        </div>
+        
+        <!-- 2023年相册 -->
+        <div class="year-section">
+            <div class="year-header">
+                <h2 class="year-title">2023年</h2>
+                <div class="year-line"></div>
+            </div>
+            <div class="album-grid">
+                <!-- 夏日海滩相册 -->
+                <a href="my-uploads.html?id=summer-beach-2023" class="album-card">
+                    <img src="https://picsum.photos/400/300?random=801" alt="夏日海滩" class="album-image">
+                    <div class="album-details">
+                        <h3 class="album-title">夏日海滩</h3>
+                        <div class="album-date">创建于: 2023年7月15日</div>
+                        <div class="photo-count">
+                            <i class="fas fa-image"></i> 31张照片
+                        </div>
+                    </div>
+                </a>
+                
+                <!-- 春季踏青相册 -->
+                <a href="my-uploads.html?id=spring-hike-2023" class="album-card">
+                    <img src="https://picsum.photos/400/300?random=802" alt="春季踏青" class="album-image">
+                    <div class="album-details">
+                        <h3 class="album-title">春季踏青</h3>
+                        <div class="album-date">创建于: 2023年4月2日</div>
+                        <div class="photo-count">
+                            <i class="fas fa-image"></i> 25张照片
+                        </div>
+                    </div>
+                </a>
+                
+                <!-- 新年庆典相册 -->
+                <a href="my-uploads.html?id=new-year-celebration-2023" class="album-card">
+                    <img src="https://picsum.photos/400/300?random=803" alt="新年庆典" class="album-image">
+                    <div class="album-details">
+                        <h3 class="album-title">新年庆典</h3>
+                        <div class="album-date">创建于: 2023年1月1日</div>
+                        <div class="photo-count">
+                            <i class="fas fa-image"></i> 18张照片
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 2022年相册 -->
+        <div class="year-section">
+            <div class="year-header">
+                <h2 class="year-title">2022年</h2>
+                <div class="year-line"></div>
+            </div>
+            <div class="album-grid">
+                <!-- 冬季雪景相册 -->
+                <a href="my-uploads.html?id=winter-snow-2022" class="album-card">
+                    <img src="https://picsum.photos/400/300?random=804" alt="冬季雪景" class="album-image">
+                    <div class="album-details">
+                        <h3 class="album-title">冬季雪景</h3>
+                        <div class="album-date">创建于: 2022年12月25日</div>
+                        <div class="photo-count">
+                            <i class="fas fa-image"></i> 27张照片
+                        </div>
+                    </div>
+                </a>
+                
+                <!-- 秋日枫叶相册 -->
+                <a href="my-uploads.html?id=autumn-maple-2022" class="album-card">
+                    <img src="https://picsum.photos/400/300?random=805" alt="秋日枫叶" class="album-image">
+                    <div class="album-details">
+                        <h3 class="album-title">秋日枫叶</h3>
+                        <div class="album-date">创建于: 2022年10月18日</div>
+                        <div class="photo-count">
+                            <i class="fas fa-image"></i> 33张照片
+                        </div>
+                    </div>
+                </a>
+                
+                <!-- 暑假旅行相册 -->
+                <a href="my-uploads.html?id=summer-vacation-2022" class="album-card">
+                    <img src="https://picsum.photos/400/300?random=806" alt="暑假旅行" class="album-image">
+                    <div class="album-details">
+                        <h3 class="album-title">暑假旅行</h3>
+                        <div class="album-date">创建于: 2022年8月10日</div>
+                        <div class="photo-count">
+                            <i class="fas fa-image"></i> 42张照片
+                        </div>
+                    </div>
+                </a>
+                
+                <!-- 毕业典礼相册 -->
+                <a href="my-uploads.html?id=graduation-ceremony-2022" class="album-card">
+                    <img src="https://picsum.photos/400/300?random=807" alt="毕业典礼" class="album-image">
+                    <div class="album-details">
+                        <h3 class="album-title">毕业典礼</h3>
+                        <div class="album-date">创建于: 2022年6月30日</div>
+                        <div class="photo-count">
+                            <i class="fas fa-image"></i> 24张照片
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 2021年相册 -->
+        <div class="year-section">
+            <div class="year-header">
+                <h2 class="year-title">2021年</h2>
+                <div class="year-line"></div>
+            </div>
+            <div class="album-grid">
+                <!-- 跨年派对相册 -->
+                <a href="my-uploads.html?id=new-year-party-2021" class="album-card">
+                    <img src="https://picsum.photos/400/300?random=808" alt="跨年派对" class="album-image">
+                    <div class="album-details">
+                        <h3 class="album-title">跨年派对</h3>
+                        <div class="album-date">创建于: 2021年12月31日</div>
+                        <div class="photo-count">
+                            <i class="fas fa-image"></i> 28张照片
+                        </div>
+                    </div>
+                </a>
+                
+                <!-- 生日庆典相册 -->
+                <a href="my-uploads.html?id=birthday-celebration-2021" class="album-card">
+                    <img src="https://picsum.photos/400/300?random=809" alt="生日庆典" class="album-image">
+                    <div class="album-details">
+                        <h3 class="album-title">生日庆典</h3>
+                        <div class="album-date">创建于: 2021年9月16日</div>
+                        <div class="photo-count">
+                            <i class="fas fa-image"></i> 36张照片
+                        </div>
+                    </div>
+                </a>
+                
+                <!-- 春游相册 -->
+                <a href="my-uploads.html?id=spring-trip-2021" class="album-card">
+                    <img src="https://picsum.photos/400/300?random=810" alt="春游" class="album-image">
+                    <div class="album-details">
+                        <h3 class="album-title">春游</h3>
+                        <div class="album-date">创建于: 2021年3月20日</div>
+                        <div class="photo-count">
+                            <i class="fas fa-image"></i> 30张照片
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
+
+<script type="module">
+    import { awsConfig } from './src/config/aws-config.js';
+    
+    document.addEventListener('DOMContentLoaded', async function() {
+        try {
+            console.log('开始获取时间相册数据');
+            
+            // 使用directUploadHandler的getAlbums功能，获取时间类型的相册
+            const apiUrl = `${awsConfig.apiGatewayUrl}/upload-direct?action=getAlbums&type=time`;
+            console.log('API URL:', apiUrl);
+            
+            const response = await fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Origin': window.location.origin
+                }
+            });
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('获取相册列表失败:', errorText);
+                throw new Error(`API调用失败: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log('获取到的相册数据:', data);
+            
+            if (!data.success) {
+                throw new Error('获取相册列表失败: ' + (data.error || '未知错误'));
+            }
+            
+            // 如果没有相册，显示上传提示
+            if (!data.albums || data.albums.length === 0) {
+                const emptyState = `
+                    <div class="empty-state" style="text-align: center; padding: 50px 20px; margin-top: 30px;">
+                        <i class="fas fa-calendar-day" style="font-size: 3em; color: #ccc; margin-bottom: 20px;"></i>
+                        <h2 style="color: #666; margin-bottom: 15px;">暂无时间相册</h2>
+                        <p style="color: #888; margin-bottom: 25px;">您还没有创建任何时间相册</p>
+                        <a href="upload.html" class="create-album-btn" style="
+                            display: inline-block;
+                            padding: 12px 25px;
+                            background-color: var(--primary-color);
+                            color: white;
+                            text-decoration: none;
+                            border-radius: 5px;
+                            font-weight: bold;
+                        ">
+                            <i class="fas fa-plus"></i> 创建第一个时间相册
+                        </a>
+                    </div>
+                `;
+                
+                // 清空当前内容并显示空状态
+                const mainContent = document.querySelector('.main-content');
+                // 保留标题和过滤器
+                const pageTitle = mainContent.querySelector('.page-title');
+                const timeFilter = mainContent.querySelector('.time-filter');
+                
+                mainContent.innerHTML = '';
+                mainContent.appendChild(pageTitle);
+                mainContent.appendChild(timeFilter);
+                mainContent.innerHTML += emptyState;
+                return;
+            }
+            
+            // 按年份分组
+            const albumsByYear = {};
+            
+            data.albums.forEach(album => {
+                // 从创建日期或照片日期中提取年份
+                let year;
+                if (album.photoDate) {
+                    year = new Date(album.photoDate).getFullYear();
+                } else {
+                    year = new Date(album.createdAt || Date.now()).getFullYear();
+                }
+                
+                if (!albumsByYear[year]) {
+                    albumsByYear[year] = [];
+                }
+                
+                albumsByYear[year].push(album);
+            });
+            
+            // 排序年份（从最新到最旧）
+            const sortedYears = Object.keys(albumsByYear).sort((a, b) => b - a);
+            
+            // 清除现有内容
+            const mainContent = document.querySelector('.main-content');
+            // 保留标题和过滤器
+            const pageTitle = mainContent.querySelector('.page-title');
+            const timeFilter = mainContent.querySelector('.time-filter');
+            
+            mainContent.innerHTML = '';
+            mainContent.appendChild(pageTitle);
+            mainContent.appendChild(timeFilter);
+            
+            // 重建年份标签
+            const yearTags = ['全部时间'];
+            sortedYears.forEach(year => {
+                yearTags.push(`${year}年`);
+            });
+            
+            timeFilter.innerHTML = '';
+            yearTags.forEach((tag, index) => {
+                const tagElement = document.createElement('div');
+                tagElement.className = `time-tag${index === 0 ? ' active' : ''}`;
+                tagElement.textContent = tag;
+                timeFilter.appendChild(tagElement);
+            });
+            
+            // 为每个年份创建一个部分
+            sortedYears.forEach(year => {
+                const yearSection = document.createElement('div');
+                yearSection.className = 'year-section';
+                
+                // 创建年份标题
+                const yearHeader = document.createElement('div');
+                yearHeader.className = 'year-header';
+                yearHeader.innerHTML = `
+                    <h2 class="year-title">${year}年</h2>
+                    <div class="year-line"></div>
+                `;
+                yearSection.appendChild(yearHeader);
+                
+                // 创建相册网格
+                const albumGrid = document.createElement('div');
+                albumGrid.className = 'album-grid';
+                
+                // 添加该年份的所有相册
+                albumsByYear[year].forEach(album => {
+                    const albumCard = document.createElement('a');
+                    albumCard.href = `my-uploads.html?id=${album.albumId}`;
+                    albumCard.className = 'album-card';
+                    
+                    // 检查封面图片URL是否有效
+                    const coverUrl = album.coverImageUrl && album.coverImageUrl.trim() !== '' 
+                        ? album.coverImageUrl 
+                        : 'https://picsum.photos/400/300?random=' + Math.floor(Math.random() * 1000);
+                    
+                    albumCard.innerHTML = `
+                        <img src="${coverUrl}" alt="${album.title}" class="album-image" onerror="this.src='https://picsum.photos/400/300?random=${Math.floor(Math.random() * 1000)}'; this.onerror=null;">
+                        <div class="album-details">
+                            <h3 class="album-title">${album.title || '未命名相册'}</h3>
+                            <div class="album-date">创建于: ${new Date(album.createdAt || Date.now()).toLocaleDateString('zh-CN')}</div>
+                            <div class="photo-count">
+                                <i class="fas fa-image"></i> ${album.photoIds ? album.photoIds.length : 0}张照片
+                            </div>
+                        </div>
+                    `;
+                    
+                    albumGrid.appendChild(albumCard);
+                });
+                
+                yearSection.appendChild(albumGrid);
+                mainContent.appendChild(yearSection);
+            });
+            
+            // 添加年份标签点击事件处理
+            const timeTags = document.querySelectorAll('.time-tag');
+            timeTags.forEach(tag => {
+                tag.addEventListener('click', function() {
+                    // 移除所有标签的active类
+                    timeTags.forEach(t => t.classList.remove('active'));
+                    // 为当前标签添加active类
+                    this.classList.add('active');
+                    
+                    const selectedYear = this.textContent;
+                    const yearSections = document.querySelectorAll('.year-section');
+                    
+                    if (selectedYear === '全部时间') {
+                        // 显示所有年份
+                        yearSections.forEach(section => {
+                            section.style.display = 'block';
+                        });
+                    } else {
+                        // 只显示选定的年份
+                        yearSections.forEach(section => {
+                            const sectionYear = section.querySelector('.year-title').textContent;
+                            if (sectionYear === selectedYear) {
+                                section.style.display = 'block';
+                            } else {
+                                section.style.display = 'none';
+                            }
+                        });
+                    }
+                });
+            });
+            
+        } catch (error) {
+            console.error('加载时间相册失败:', error);
+            alert('加载时间相册失败: ' + error.message);
+        }
+    });
+</script> 

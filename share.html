@@ -1,0 +1,573 @@
+<!-- <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分享 - 时光胶囊</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #6ea8ff;
+            --primary-dark: #3570b8;
+            --light-blue: #f5f8fc;
+            --text-color: #444;
+            --white: #FFFFFF;
+        }
+
+        body {
+            font-family: 'SimHei', 'Microsoft YaHei', sans-serif;
+            background-color: var(--light-blue);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .share-container {
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .share-title {
+            color: var(--text-color);
+            margin-bottom: 20px;
+        }
+
+        .share-description {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        .share-link-container {
+            display: flex;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .share-link {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #e1e8f0;
+            border-radius: 8px;
+            font-size: 0.9em;
+            outline: none;
+            color: var(--text-color);
+        }
+
+        .share-button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+        }
+
+        .share-button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .share-options {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .share-option {
+            width: 40px;
+            height: 40px;
+            background-color: #f5f8fc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--primary-color);
+        }
+
+        .share-option:hover {
+            background-color: var(--primary-light);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--white);
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .popup.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .popup-text {
+            color: var(--text-color);
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .back-link {
+            margin-top: 20px;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--primary-dark);
+        }
+
+        .back-link i {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="share-container">
+        <h2 class="share-title">分享相册</h2>
+        <p class="share-description">将此链接分享给亲朋好友，让他们一起查看您的珍贵回忆</p>
+        
+        <div class="share-link-container">
+            <input type="text" class="share-link" id="shareLink" value="https://时光胶囊.com/album/family-2023" readonly>
+            <button class="share-button" id="copyBtn"><i class="fas fa-copy"></i> 复制</button>
+        </div>
+        
+        <div class="share-options">
+            <div class="share-option" title="微信分享">
+                <i class="fab fa-weixin"></i>
+            </div>
+            <div class="share-option" title="QQ分享">
+                <i class="fab fa-qq"></i>
+            </div>
+            <div class="share-option" title="微博分享">
+                <i class="fab fa-weibo"></i>
+            </div>
+            <div class="share-option" title="通过邮件分享">
+                <i class="fas fa-envelope"></i>
+            </div>
+        </div>
+        
+        <a href="album-detail.html" class="back-link">
+            <i class="fas fa-arrow-left"></i> 返回相册
+        </a>
+    </div>
+    
+    <div class="popup" id="copyPopup">
+        <p class="popup-text">复制成功！</p>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const copyBtn = document.getElementById('copyBtn');
+            const shareLink = document.getElementById('shareLink');
+            const popup = document.getElementById('copyPopup');
+            
+            // 从URL获取参数
+            function getUrlParameter(name) {
+                name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+                var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+                var results = regex.exec(location.search);
+                return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+            }
+            
+            // 设置分享链接（未来可扩展为使用实际ID）
+            function setShareLink() {
+                const albumId = getUrlParameter('albumId') || 'family-2023';
+                const photoId = getUrlParameter('photoId') || '';
+                
+                let linkUrl = 'https://时光胶囊.com/album/' + albumId;
+                if (photoId) {
+                    linkUrl += '/photo/' + photoId;
+                }
+                
+                shareLink.value = linkUrl;
+            }
+            
+            // 初始化分享链接
+            setShareLink();
+            
+            copyBtn.addEventListener('click', function() {
+                // 使用现代剪贴板API，如果可用
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(shareLink.value)
+                        .then(() => {
+                            // 复制成功
+                            popup.classList.add('show');
+                            setTimeout(function() {
+                                popup.classList.remove('show');
+                            }, 2000);
+                        })
+                        .catch(err => {
+                            console.error('无法复制: ', err);
+                            // 备用方法
+                            fallbackCopyTextToClipboard();
+                        });
+                } else {
+                    // 如果Clipboard API不可用，使用旧方法
+                    fallbackCopyTextToClipboard();
+                }
+            });
+            
+            // 备用复制方法
+            function fallbackCopyTextToClipboard() {
+                // 选择输入框内容
+                shareLink.select();
+                shareLink.setSelectionRange(0, 99999); // 适用于移动设备
+                
+                // 复制内容到剪贴板
+                try {
+                    document.execCommand('copy');
+                    // 复制成功后显示弹窗
+                    popup.classList.add('show');
+                    
+                    // 2秒后自动隐藏弹窗
+                    setTimeout(function() {
+                        popup.classList.remove('show');
+                    }, 2000);
+                } catch (err) {
+                    console.error('复制失败:', err);
+                    alert('复制失败，请手动复制链接');
+                }
+            }
+            
+            // 点击社交媒体分享按钮
+            const shareOptions = document.querySelectorAll('.share-option');
+            shareOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    alert('分享功能即将上线，敬请期待！');
+                });
+            });
+        });
+    </script>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分享 - 时光胶囊</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* 原有样式保持不变 */
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #6ea8ff;
+            --primary-dark: #3570b8;
+            --light-blue: #f5f8fc;
+            --text-color: #444;
+            --white: #FFFFFF;
+        }
+
+        body {
+            font-family: 'SimHei', 'Microsoft YaHei', sans-serif;
+            background-color: var(--light-blue);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .share-container {
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .share-title {
+            color: var(--text-color);
+            margin-bottom: 20px;
+        }
+
+        .share-description {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        .share-link-container {
+            display: flex;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .share-link {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #e1e8f0;
+            border-radius: 8px;
+            font-size: 0.9em;
+            outline: none;
+            color: var(--text-color);
+        }
+
+        .share-button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+        }
+
+        .share-button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .share-options {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .share-option {
+            width: 40px;
+            height: 40px;
+            background-color: #f5f8fc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--primary-color);
+        }
+
+        .share-option:hover {
+            background-color: var(--primary-light);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--white);
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .popup.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .popup-text {
+            color: var(--text-color);
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .back-link {
+            margin-top: 20px;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--primary-dark);
+        }
+
+        .back-link i {
+            margin-right: 5px;
+        }
+        
+        .link-error {
+            color: #dc3545;
+            font-size: 0.8em;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="share-container">
+        <h2 class="share-title">分享相册</h2>
+        <p class="share-description">将此链接分享给亲朋好友，让他们一起查看您的珍贵回忆</p>
+        
+        <div class="share-link-container">
+            <input type="text" class="share-link" id="shareLink" readonly>
+            <button class="share-button" id="copyBtn"><i class="fas fa-copy"></i> 复制</button>
+        </div>
+        <div class="link-error" id="linkError">链接无效，请检查配置</div>
+        
+        <div class="share-options">
+            <div class="share-option" title="微信分享">
+                <i class="fab fa-weixin"></i>
+            </div>
+            <div class="share-option" title="QQ分享">
+                <i class="fab fa-qq"></i>
+            </div>
+            <div class="share-option" title="微博分享">
+                <i class="fab fa-weibo"></i>
+            </div>
+            <div class="share-option" title="通过邮件分享">
+                <i class="fas fa-envelope"></i>
+            </div>
+        </div>
+        
+        <a href="album-detail.html" class="back-link">
+            <i class="fas fa-arrow-left"></i> 返回相册
+        </a>
+    </div>
+    
+    <div class="popup" id="copyPopup">
+        <p class="popup-text">复制成功！</p>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const copyBtn = document.getElementById('copyBtn');
+            const shareLink = document.getElementById('shareLink');
+            const linkError = document.getElementById('linkError');
+            
+            // 设置您的实际部署域名
+            const APP_DOMAIN = 'staging.dsbv6c2bq4kma.amplifyapp.com';
+            
+            // 生成有效的分享URL - 修改为指向相册详情页
+            function generateShareUrl() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const albumId = urlParams.get('albumId') || 'family-2023'; // 默认使用family-2023
+                const photoId = urlParams.get('photoId') || '';
+                
+                // 构建完整URL - 指向album-detail.html
+                let url = `https://${APP_DOMAIN}/album-detail.html?id=${encodeURIComponent(albumId)}`;
+                
+                // 如果有照片ID，添加锚点定位
+                if (photoId) {
+                    url += `#photo-${encodeURIComponent(photoId)}`;
+                }
+                return url;
+            }
+            
+            // 初始化分享链接
+            function initShareLink() {
+                const url = generateShareUrl();
+                shareLink.value = url;
+                
+                // 验证链接格式
+                if (!isValidUrl(url)) {
+                    linkError.style.display = 'block';
+                } else {
+                    linkError.style.display = 'none';
+                }
+            }
+            
+            // 简单的URL验证
+            function isValidUrl(url) {
+                try {
+                    new URL(url);
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+            }
+            
+            // 复制功能
+            copyBtn.addEventListener('click', async function() {
+                try {
+                    const urlToCopy = shareLink.value;
+                    
+                    // 验证链接有效性
+                    if (!isValidUrl(urlToCopy)) {
+                        linkError.style.display = 'block';
+                        linkError.textContent = '链接无效，无法复制';
+                        return;
+                    }
+                    
+                    // 使用现代剪贴板API
+                    if (navigator.clipboard) {
+                        await navigator.clipboard.writeText(urlToCopy);
+                        alert('复制成功！链接已准备好分享');
+                    } else {
+                        // 备用方法
+                        shareLink.select();
+                        document.execCommand('copy');
+                        alert('复制成功！请粘贴分享');
+                    }
+                    
+                    // 测试链接是否可以打开（可选）
+                    testLinkAccessibility(urlToCopy);
+                    
+                } catch (err) {
+                    console.error('复制失败:', err);
+                    linkError.style.display = 'block';
+                    linkError.textContent = '复制失败，请手动复制';
+                }
+            });
+            
+            // 测试链接可访问性（可选）
+            function testLinkAccessibility(url) {
+                // 移除锚点部分进行测试
+                const testUrl = url.split('#')[0];
+                fetch(testUrl, { method: 'HEAD', mode: 'no-cors' })
+                    .then(() => {
+                        console.log('链接可访问');
+                    })
+                    .catch(() => {
+                        linkError.style.display = 'block';
+                        linkError.textContent = '链接无法访问，请检查部署状态';
+                    });
+            }
+            
+            // 初始化
+            initShareLink();
+        });
+    </script>
+</body>
+</html>
+
+

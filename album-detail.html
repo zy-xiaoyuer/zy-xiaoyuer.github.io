@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>相册详情 - 时光胶囊</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #6ea8ff;
+            --primary-dark: #3570b8;
+            --bg-color: #f5f8fc;
+            --nav-bg-color: #ffffff;
+            --text-color: #444;
+            --text-light: #777;
+            --border-color: #e1e8f0;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        /* 修改相册详情样式 */
+        .album-header {
+            max-width: 1000px;
+            margin: 40px auto 20px;
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            padding: 20px;
+            background: var(--nav-bg-color);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        .album-cover {
+            width: 300px;
+            height: 300px;
+            border-radius: 10px;
+            overflow: hidden;
+            flex-shrink: 0;
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.2);
+        }
+
+        .album-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .album-info {
+            flex: 1;
+        }
+
+        .album-title {
+            font-size: 2em;
+            margin: 0 0 15px 0;
+            color: var(--text-color);
+        }
+
+        .album-meta {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .album-meta-item {
+            display: flex;
+            align-items: center;
+            color: var(--text-light);
+            font-size: 0.9em;
+        }
+
+        .album-meta-item i {
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
+
+        .album-desc {
+            color: var(--text-color);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .album-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .album-tag {
+            padding: 5px 15px;
+            background: rgba(74, 144, 226, 0.1);
+            border-radius: 20px;
+            color: var(--primary-color);
+            font-size: 0.9em;
+        }
+
+        .album-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .album-action-btn {
+            padding: 8px 20px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 8px;
+            font-size: 0.9em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .album-action-btn i {
+            margin-right: 8px;
+        }
+
+        .album-action-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .album-action-btn.secondary {
+            background: rgba(74, 144, 226, 0.1);
+            color: var(--primary-color);
+        }
+
+        .album-action-btn.secondary:hover {
+            background: rgba(74, 144, 226, 0.2);
+        }
+
+        /* 照片网格布局样式 */
+        .photo-grid {
+            max-width: 1000px;
+            margin: 30px auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 15px;
+            padding: 0 20px;
+        }
+
+        .photo-item {
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            aspect-ratio: 1;
+            box-shadow: 0 4px 8px rgba(74, 144, 226, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: white;
+        }
+
+        .photo-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(74, 144, 226, 0.2);
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: filter 0.3s ease;
+        }
+
+        .photo-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            padding: 15px;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .photo-item:hover .photo-overlay {
+            opacity: 1;
+        }
+
+        .photo-title {
+            font-size: 0.9em;
+            margin: 0 0 5px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .photo-date {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+
+        .photo-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .photo-item:hover .photo-actions {
+            opacity: 1;
+        }
+
+        .photo-action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            text-decoration: none;
+        }
+
+        .photo-action-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* 工具栏样式 */
+        .album-toolbar {
+            max-width: 1000px;
+            margin: 0 auto 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .album-filter select {
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--nav-bg-color);
+            color: var(--text-color);
+            font-size: 0.9em;
+            cursor: pointer;
+        }
+
+        .album-view-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        .view-option {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--nav-bg-color);
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+
+        .view-option.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* 修改分页样式 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 40px;
+            gap: 10px;
+        }
+
+        .page-item {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: var(--nav-bg-color);
+            color: var(--text-color);
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+
+        .page-item.active {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+        }
+
+        .page-item:hover:not(.active) {
+            background: var(--bg-color);
+            color: var(--primary-color);
+        }
+
+        .page-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-item i {
+            font-size: 0.8em;
+        }
+
+        /* 其他原有样式保持不变... */
+
+    </style>
+</head>
+<body>
+    <!-- 原有导航栏代码保持不变... -->
+
+    <!-- 主要内容 -->
+    <div class="main-content">
+        <!-- 相册头部信息 -->
+        <div class="album-header">
+            <div class="album-cover">
+                <img src="https://picsum.photos/400/400?random=10" alt="家庭聚会">
+            </div>
+            <div class="album-info">
+                <h1 class="album-title">家庭聚会</h1>
+                <div class="album-meta">
+                    <div class="album-meta-item">
+                        <i class="far fa-calendar-alt"></i>
+                        <span>创建于 2023-05-15</span>
+                    </div>
+                    <div class="album-meta-item">
+                        <i class="far fa-images"></i>
+                        <span>24张照片</span>
+                    </div>
+                    <div class="album-meta-item">
+                        <i class="far fa-eye"></i>
+                        <span>126次浏览</span>
+                    </div>
+                </div>
+                <p class="album-desc">记录全家人欢聚的美好时光，包含春节、中秋等重要节日的家庭聚餐照片，以及平日里家人共度时光的温馨瞬间。</p>
+                <div class="album-tags">
+                    <div class="album-tag">家庭</div>
+                    <div class="album-tag">聚餐</div>
+                    <div class="album-tag">节日</div>
+                    <div class="album-tag">亲情</div>
+                </div>
+                <div class="album-actions">
+                    <div class="album-action-btn">
+                        <i class="fas fa-edit"></i>
+                        <span>编辑相册</span>
+                    </div>
+                    <a href="share.html?albumId=family-2023" class="album-action-btn secondary">
+                        <i class="fas fa-share-alt"></i>
+                        <span>分享相册</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 相册工具栏 -->
+        <div class="album-toolbar">
+            <div class="album-filter">
+                <select>
+                    <option>按时间排序（最新）</option>
+                    <option>按时间排序（最早）</option>
+                    <option>按名称排序（A-Z）</option>
+                    <option>按名称排序（Z-A）</option>
+                </select>
+            </div>
+            <div class="album-view-options">
+                <div class="view-option active" title="网格视图">
+                    <i class="fas fa-th"></i>
+                </div>
+                <div class="view-option" title="列表视图">
+                    <i class="fas fa-list"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 照片网格 -->
+        <div class="photo-grid">
+            <!-- 循环生成照片项 -->
+            <div class="photo-item">
+                <img src="https://picsum.photos/400/400?random=1" alt="照片1">
+                <div class="photo-overlay">
+                    <h3 class="photo-title">全家福</h3>
+                    <div class="photo-date">2023-01-22</div>
+                </div>
+                <div class="photo-actions">
+                    <div class="photo-action-btn" title="查看大图">
+                        <i class="fas fa-expand"></i>
+                    </div>
+                    <div class="photo-action-btn" title="下载">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <a href="share.html?albumId=family-2023&photoId=photo1" class="photo-action-btn" title="分享">
+                        <i class="fas fa-share-alt"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="photo-item">
+                <img src="https://picsum.photos/400/400?random=2" alt="照片2">
+                <div class="photo-overlay">
+                    <h3 class="photo-title">春节聚餐</h3>
+                    <div class="photo-date">2023-01-22</div>
+                </div>
+                <div class="photo-actions">
+                    <div class="photo-action-btn" title="查看大图">
+                        <i class="fas fa-expand"></i>
+                    </div>
+                    <div class="photo-action-btn" title="下载">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <a href="share.html?albumId=family-2023&photoId=photo2" class="photo-action-btn" title="分享">
+                        <i class="fas fa-share-alt"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="photo-item">
+                <img src="https://picsum.photos/400/400?random=3" alt="照片3">
+                <div class="photo-overlay">
+                    <h3 class="photo-title">爷爷生日</h3>
+                    <div class="photo-date">2023-02-15</div>
+                </div>
+                <div class="photo-actions">
+                    <div class="photo-action-btn" title="查看大图">
+                        <i class="fas fa-expand"></i>
+                    </div>
+                    <div class="photo-action-btn" title="下载">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <a href="share.html?albumId=family-2023&photoId=photo3" class="photo-action-btn" title="分享">
+                        <i class="fas fa-share-alt"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="photo-item">
+                <img src="https://picsum.photos/400/400?random=4" alt="照片4">
+                <div class="photo-overlay">
+                    <h3 class="photo-title">户外烧烤</h3>
+                    <div class="photo-date">2023-03-05</div>
+                </div>
+                <div class="photo-actions">
+                    <div class="photo-action-btn" title="查看大图">
+                        <i class="fas fa-expand"></i>
+                    </div>
+                    <div class="photo-action-btn" title="下载">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <a href="share.html?albumId=family-2023&photoId=photo4" class="photo-action-btn" title="分享">
+                        <i class="fas fa-share-alt"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="photo-item">
+                <img src="https://picsum.photos/400/400?random=5" alt="照片5">
+                <div class="photo-overlay">
+                    <h3 class="photo-title">公园野餐</h3>
+                    <div class="photo-date">2023-04-12</div>
+                </div>
+                <div class="photo-actions">
+                    <div class="photo-action-btn" title="查看大图">
+                        <i class="fas fa-expand"></i>
+                    </div>
+                    <div class="photo-action-btn" title="下载">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <a href="share.html?albumId=family-2023&photoId=photo5" class="photo-action-btn" title="分享">
+                        <i class="fas fa-share-alt"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="photo-item">
+                <img src="https://picsum.photos/400/400?random=6" alt="照片6">
+                <div class="photo-overlay">
+                    <h3 class="photo-title">周末游玩</h3>
+                    <div class="photo-date">2023-04-18</div>
+                </div>
+                <div class="photo-actions">
+                    <div class="photo-action-btn" title="查看大图">
+                        <i class="fas fa-expand"></i>
+                    </div>
+                    <div class="photo-action-btn" title="下载">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <a href="share.html?albumId=family-2023&photoId=photo6" class="photo-action-btn" title="分享">
+                        <i class="fas fa-share-alt"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="photo-item">
+                <img src="https://picsum.photos/400/400?random=7" alt="照片7">
+                <div class="photo-overlay">
+                    <h3 class="photo-title">宝宝生日</h3>
+                    <div class="photo-date">2023-05-02</div>
+                </div>
+                <div class="photo-actions">
+                    <div class="photo-action-btn" title="查看大图">
+                        <i class="fas fa-expand"></i>
+                    </div>
+                    <div class="photo-action-btn" title="下载">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <a href="share.html?albumId=family-2023&photoId=photo7" class="photo-action-btn" title="分享">
+                        <i class="fas fa-share-alt"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="photo-item">
+                <img src="https://picsum.photos/400/400?random=8" alt="照片8">
+                <div class="photo-overlay">
+                    <h3 class="photo-title">家庭旅行</h3>
+                    <div class="photo-date">2023-05-10</div>
+                </div>
+                <div class="photo-actions">
+                    <div class="photo-action-btn" title="查看大图">
+                        <i class="fas fa-expand"></i>
+                    </div>
+                    <div class="photo-action-btn" title="下载">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <a href="share.html?albumId=family-2023&photoId=photo8" class="photo-action-btn" title="分享">
+                        <i class="fas fa-share-alt"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 分页 -->
+        <div class="pagination">
+            <div class="page-item disabled"><i class="fas fa-chevron-left"></i></div>
+            <div class="page-item active">1</div>
+            <div class="page-item">2</div>
+            <div class="page-item">3</div>
+            <div class="page-item">4</div>
+            <div class="page-item">5</div>
+            <div class="page-item"><i class="fas fa-chevron-right"></i></div>
+        </div>
+    </div>
+
+    <!-- 原有回到顶部按钮和脚本代码保持不变... -->
+
+    <script type="module">
+        import { awsConfig } from './src/config/aws-config.js';
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // 从URL获取相册ID
+                const urlParams = new URLSearchParams(window.location.search);
+                const albumId = urlParams.get('id');
+                
+                if (!albumId) {
+                    throw new Error('未提供相册ID');
+                }
+                
+                console.log('获取相册详情，ID:', albumId);
+                
+                // 使用directUploadHandler而不是albumApiUrl
+                const apiUrl = `${awsConfig.apiGatewayUrl}/albums/${albumId}`;
+                console.log('API URL:', apiUrl);
+                
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Origin': window.location.origin
+                    }
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('获取相册详情失败:', errorText);
+                    throw new Error(`API调用失败: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('获取到的相册详情:', data);
+                
+                if (!data.success) {
+                    throw new Error('获取相册详情失败: ' + (data.error || '未知错误'));
+                }
+                
+                // 渲染相册详情
+                renderAlbumDetail(data.album);
+                
+                // 获取相册中的照片
+                await loadAlbumPhotos(albumId);
+            } catch (error) {
+                console.error('加载相册详情失败:', error);
+                showError('加载相册详情失败: ' + error.message);
+            }
+        });
+        
+        // 加载相册中的照片
+        async function loadAlbumPhotos(albumId) {
+            try {
+                console.log('获取相册照片，相册ID:', albumId);
+                
+                // 使用directUploadHandler而不是albumApiUrl
+                const apiUrl = `${awsConfig.apiGatewayUrl}/photos?albumId=${albumId}`;
+                console.log('照片API URL:', apiUrl);
+                
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Origin': window.location.origin
+                    }
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('获取相册照片失败:', errorText);
+                    throw new Error(`API调用失败: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('获取到的相册照片:', data);
+                
+                if (!data.success) {
+                    throw new Error('获取相册照片失败: ' + (data.error || '未知错误'));
+                }
+                
+                // 渲染相册照片
+                renderAlbumPhotos(data.photos);
+            } catch (error) {
+                console.error('加载相册照片失败:', error);
+                showError('加载相册照片失败: ' + error.message);
+            }
+        }
+        
+        // 显示错误信息和渲染相册详情的函数（与之前相同）
+    </script>
+</body>
+</html>
