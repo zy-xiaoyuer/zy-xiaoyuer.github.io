@@ -1,0 +1,1 @@
+import{r as t,c as a}from"./request.zK5kZ3KA.js";function r(a){return t("/auth/register",{method:"POST",data:a,auth:!1})}function u(a){return t("/auth/login",{method:"POST",data:a,auth:!1})}function e(r={}){return t("/auth/logout",{method:"POST",data:r}).then(t=>(a(),t))}export{e as a,u as l,r};

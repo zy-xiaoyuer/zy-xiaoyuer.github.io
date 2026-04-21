@@ -1,0 +1,1 @@
+import{r}from"./request.CFc3veKl.js";function n(r={}){const n=Object.entries(r).filter(([,r])=>null!=r&&""!==r),t=new URLSearchParams(n).toString();return t?`?${t}`:""}function t(t){return r(`/monitor/realtime/devices${n(t)}`)}function e(t){return r(`/monitor/trend/flow${n(t)}`)}function o(t){return r(`/monitor/trend/efficiency-summary${n(t)}`)}export{e as a,o as b,t as g};
