@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=430, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>华影录</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .app-wrap{
+            width: 430px;
+            height: 932px;
+            overflow: hidden;
+            position: relative;
+            background-color: #f5efe0;
+            background-image: url("./assets/images/bg-paper.png");
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding-bottom: 160px;
+        }
+
+        .title-img {
+            width: 220px;
+            height: auto;
+            margin-bottom: 100px;
+            object-fit: contain;
+            margin-top: 30px
+        }
+
+        .rotate-box {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 60px;
+        }
+
+        .circle-border {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: url("./assets/images/circle-border.png");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            animation: rotate 12s linear infinite;
+        }
+
+        .fox-img {
+            width: 190px;
+            height: 190px;
+            background-image: url("./assets/images/fox.png");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: 2;
+        }
+
+        .tip {
+            margin-top: 100px;
+            font-size: 18px;
+            color: #d85a6a;
+            opacity: 0.9;
+            letter-spacing: 2px;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes run {
+            0% { transform: translateX(-50%) translateY(0) rotate(-5deg); }
+            50% { transform: translateX(-50%) translateY(-4px) rotate(5deg); }
+            100% { transform: translateX(-50%) translateY(0) rotate(-5deg); }
+        }
+
+        .nav-wrap {
+            position: absolute;
+            bottom: 35px;
+            left: 0;
+            width: 100%;
+            padding: 0 12px;
+        }
+        .progress-bar-box {
+            width: 100%;
+            max-width: 400px;
+            height: 10px;
+            background: #c9b99c;
+            border-radius: 99px;
+            display: flex;
+            margin: 0 auto;
+            position: relative;
+        }
+        .progress-item {
+            flex: 1;
+            height: 100%;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .nav-fox {
+            width: 36px;
+            height: 36px;
+            background-image: url("./assets/images/icon.png");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            position: absolute;
+            left: calc(100% / 7 / 2);
+            bottom: 10px;
+            z-index: 2;
+            animation: run 0.35s infinite ease-in-out;
+            transition: left 0.5s ease;
+        }
+        .progress-item::after {
+            content: attr(data-name);
+            position: absolute;
+            top: 22px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 11px;
+            color: #553e2c;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-wrap" onclick="goNext()">
+        <img src="./assets/images/title.png" alt="华影录" class="title-img">
+
+        <div class="rotate-box">
+            <div class="circle-border"></div>
+            <div class="fox-img"></div>
+        </div>
+
+        <p class="tip">——点击任意区域跳转——</p>
+
+        <div class="nav-wrap">
+            <div class="progress-bar-box">
+                <div class="progress-item" data-name="首页" data-href="./index.html">
+                    <div class="nav-fox"></div>
+                </div>
+                <div class="progress-item" data-name="引言" data-href="./pages/intro.html"></div>
+                <div class="progress-item" data-name="历史溯源" data-href="./pages/history.html"></div>
+                <div class="progress-item" data-name="工艺制作" data-href="./pages/craft.html"></div>
+                <div class="progress-item" data-name="流派特色" data-href="./pages/style.html"></div>
+                <div class="progress-item" data-name="光影新创" data-href="./pages/innovation.html"></div>
+                <div class="progress-item" data-name="互动体验" data-href="./pages/pintu.html"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const items = document.querySelectorAll('.progress-item');
+        const fox = document.querySelector('.nav-fox');
+        const total = items.length;
+
+        function moveFox(idx) {
+            const per = 100 / total;
+            fox.style.left = per * idx + per / 2 + '%';
+        }
+
+        moveFox(0);
+
+        function goNext() {
+            window.location.href = "./pages/intro.html";
+        }
+
+        items.forEach((item, idx)=>{
+            item.onclick = function(e){
+                e.stopPropagation();
+                moveFox(idx);
+                setTimeout(()=>{
+                    const link = this.dataset.href;
+                    window.location.href = link;
+                },300)
+            }
+        })
+    </script>
+</body>
+</html>

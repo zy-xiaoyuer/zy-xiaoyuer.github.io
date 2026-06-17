@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=430, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>引言 - 华影录</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .app-wrap{
+            width: 430px;
+            height: 932px;
+            overflow: hidden;
+            position: relative;
+            background-color: #f5efe0;
+            background-image: url("../assets/images/bg-paper.png");
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            padding: 60px 20px 160px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .intro-title {
+            width: 80%;
+            max-width: 320px;
+            height: auto;
+            margin-bottom: 30px;
+            animation: zMove 4s ease-in-out infinite alternate;
+        }
+        @keyframes zMove {
+            0% { transform: translateX(-15px); }
+            50% { transform: translateX(15px); }
+            100% { transform: translateX(-15px); }
+        }
+
+        .shadow-main {
+            width: 90%;
+            max-width: 360px;
+            height: auto;
+            position: relative;
+            margin: auto 0;
+            perspective: 800px;
+        }
+        @keyframes rotateY {
+            0% {
+                transform: rotateY(0deg);
+            }
+            100% {
+                transform: rotateY(360deg);
+            }
+        }
+        .shadow-main > img:first-child {
+            width:100%;
+            animation: rotateY 12s linear infinite;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(25px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+        .text-item {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            max-width: 300px;
+            height: auto;
+            opacity: 0;
+            animation: fadeUp 0.7s ease forwards;
+            transform-style: flat;
+        }
+        .text1 { top: 18%; animation-delay: 0.4s; }
+        .text2 { top: 48%; animation-delay: 0.9s; }
+        .text3 { top: 75%; animation-delay: 1.4s; }
+
+        .btn-box {
+            width: 100%;
+            max-width: 320px;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+            margin-top: 30px;
+        }
+        .page-btn {
+            width: 130px;
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .page-btn:active {
+            transform: scale(0.92);
+        }
+
+        @keyframes run {
+            0% { transform: translateX(-50%) translateY(0) rotate(-5deg); }
+            50% { transform: translateX(-50%) translateY(-4px) rotate(5deg); }
+            100% { transform: translateX(-50%) translateY(0) rotate(-5deg); }
+        }
+        .nav-wrap {
+            position: absolute;
+            bottom: 35px;
+            left: 0;
+            width: 100%;
+            padding: 0 12px;
+        }
+        .progress-bar-box {
+            width: 100%;
+            max-width: 400px;
+            height: 10px;
+            background: #c9b99c;
+            border-radius: 99px;
+            display: flex;
+            margin: 0 auto;
+            position: relative;
+        }
+        .progress-item {
+            flex: 1;
+            height: 100%;
+            cursor: pointer;
+            position: relative;
+        }
+        .nav-fox {
+            width: 36px;
+            height: 36px;
+            background-image: url("../assets/images/icon.png");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            position: absolute;
+            bottom: 10px;
+            z-index: 2;
+            transition: left 0.5s ease;
+            animation: run 0.35s infinite ease-in-out;
+        }
+        .progress-item::after {
+            content: attr(data-name);
+            position: absolute;
+            top: 22px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 11px;
+            color: #553e2c;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-wrap">
+        <img src="../assets/images/intro/title-intro.png" alt="什么是皮影？" class="intro-title">
+
+        <div class="shadow-main">
+            <img src="../assets/images/intro/shadow-main.png" alt="皮影主图">
+            <img src="../assets/images/intro/text1.png" alt="以影成形..." class="text-item text1">
+            <img src="../assets/images/intro/text2.png" alt="国家级非物质文化遗产" class="text-item text2">
+            <img src="../assets/images/intro/text3.png" alt="集雕刻..." class="text-item text3">
+        </div>
+
+        <div class="btn-box">
+            <img src="../assets/images/btn-prev.png" alt="上一页" class="page-btn" onclick="goPrev()">
+            <img src="../assets/images/btn-next.png" alt="下一页" class="page-btn" onclick="goNext()">
+        </div>
+
+        <div class="nav-wrap">
+            <div class="progress-bar-box">
+                <div class="progress-item" data-name="首页" data-href="../index.html"></div>
+                <div class="progress-item" data-name="引言" data-href="./intro.html">
+                    <div class="nav-fox"></div>
+                </div>
+                <div class="progress-item" data-name="历史溯源" data-href="./history.html"></div>
+                <div class="progress-item" data-name="工艺制作" data-href="./craft.html"></div>
+                <div class="progress-item" data-name="流派特色" data-href="./style.html"></div>
+                <div class="progress-item" data-name="光影新创" data-href="./innovation.html"></div>
+                <div class="progress-item" data-name="互动体验" data-href="./pintu.html"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function goPrev() {
+            window.location.href = "../index.html";
+        }
+        function goNext() {
+            window.location.href = "./history.html";
+        }
+
+        const items = document.querySelectorAll('.progress-item');
+        const fox = document.querySelector('.nav-fox');
+        const total = items.length;
+        const curIndex = 1;
+
+        function moveFox(idx) {
+            const per = 100 / total;
+            fox.style.left = per * idx + per / 2 + '%';
+        }
+        moveFox(curIndex);
+
+        items.forEach((item, idx)=>{
+            item.onclick = function(e){
+                e.stopPropagation();
+                moveFox(idx);
+                setTimeout(()=>{
+                    const link = this.dataset.href;
+                    window.location.href = link;
+                },300)
+            }
+        })
+    </script>
+</body>
+</html>

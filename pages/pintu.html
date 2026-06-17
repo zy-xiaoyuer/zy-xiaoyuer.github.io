@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=430, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>指尖皮影 - 华影录</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .app-wrap {
+            width: 430px;
+            height: 932px;
+            overflow: hidden;
+            position: relative;
+            background-color: #f5efe0;
+            background-image: url("../assets/images/bg-paper.png");
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            padding: 60px 20px 160px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .puzzle-title-img {
+            width: 80%;
+            max-width: 320px;
+            height: auto;
+            margin-bottom: 30px;
+            animation: zMove 4s ease-in-out infinite alternate;
+        }
+        @keyframes zMove {
+            0% { transform: translateX(-15px); }
+            100% { transform: translateX(15px); }
+        }
+
+        .puzzle-canvas-wrapper {
+            width: 82%;
+            max-width: 310px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin: auto 0;
+        }
+        .puzzle-canvas {
+            width: 85%;
+            aspect-ratio: 1 / 1;
+            border: 2px solid #333;
+            border-radius: 2px;
+            position: relative;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr;
+            gap: 2px;
+            padding: 2px;
+            background: #b8b8b8;
+        }
+        .tip-text {
+            font-size:15px;
+            color:#666;
+            margin-top:12px;
+            text-align:center;
+        }
+
+        .puzzle-item {
+            background-color: #b8b8b8;
+            display: block;
+            user-select: none;
+            border-radius: 2px;
+            transition: opacity 0.2s;
+            cursor: grab;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .puzzle-item:active {
+            opacity: 0.8;
+            cursor: grabbing;
+        }
+
+        .btn-wrap {
+            width: 100%;
+            max-width: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top:30px;
+            gap:20px;
+        }
+        .top-btn{
+            width: 100px;
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .top-btn:active {
+            transform: scale(0.95);
+        }
+        .bottom-buttons {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+        }
+        .side-btn{
+            width: 130px;
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .side-btn:active {
+            transform: scale(0.95);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            width: 80%;
+            max-width: 300px;
+            background-color: #f9f3e8;
+            border-radius: 16px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .modal-title {
+            font-size: 28px;
+            color: #d15b5b;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .modal-info {
+            font-size: 20px;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+        .modal-next-btn {
+            width: 100px;
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .modal-next-btn:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes run {
+            0% { transform: translateX(-50%) translateY(0) rotate(-5deg); }
+            50% { transform: translateX(-50%) translateY(-4px) rotate(5deg); }
+            100% { transform: translateX(-50%) translateY(0) rotate(-5deg); }
+        }
+        .nav-wrap {
+            position: absolute;
+            bottom: 35px;
+            left: 0;
+            width: 100%;
+            padding: 0 12px;
+        }
+        .progress-bar-box {
+            width: 100%;
+            max-width: 400px;
+            height: 10px;
+            background: #c9b99c;
+            border-radius: 99px;
+            display: flex;
+            margin: 0 auto;
+            position: relative;
+        }
+        .progress-item {
+            flex: 1;
+            height: 100%;
+            cursor: pointer;
+            position: relative;
+        }
+        .nav-fox {
+            width: 36px;
+            height: 36px;
+            background-image: url("../assets/images/icon.png");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            position: absolute;
+            bottom: 10px;
+            z-index: 2;
+            transition: left 0.5s ease;
+            animation: run 0.35s infinite ease-in-out;
+        }
+        .progress-item::after {
+            content: attr(data-name);
+            position: absolute;
+            top: 22px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 11px;
+            color: #553e2c;
+        }
+    </style>
+    <link rel="preload" as="image" href="../assets/images/pintu/pintu1-1.png">
+    <link rel="preload" as="image" href="../assets/images/pintu/pintu1-2.png">
+    <link rel="preload" as="image" href="../assets/images/pintu/pintu1-3.png">
+    <link rel="preload" as="image" href="../assets/images/pintu/pintu2-1.png">
+    <link rel="preload" as="image" href="../assets/images/pintu/pintu2-2.png">
+    <link rel="preload" as="image" href="../assets/images/pintu/pintu2-3.png">
+    <link rel="preload" as="image" href="../assets/images/pintu/pintu3-1.png">
+    <link rel="preload" as="image" href="../assets/images/pintu/pintu3-2.png">
+    <link rel="preload" as="image" href="../assets/images/pintu/pintu3-3.png">
+</head>
+
+<body>
+    <div class="app-wrap">
+        <img src="../assets/images/pintu/pt-title.png" alt="指尖皮影" class="puzzle-title-img">
+
+        <div class="puzzle-canvas-wrapper">
+            <div class="puzzle-canvas" id="puzzleCanvas"></div>
+            <div class="tip-text">拖拽交换相邻的拼图碎片直到拼图完整</div>
+        </div>
+
+        <div class="btn-wrap">
+            <img src="../assets/images/pintu/finish.png" alt="完成" class="top-btn" id="completeBtn">
+            <div class="bottom-buttons">
+                <img src="../assets/images/btn-prev.png" alt="上一页" class="side-btn" id="prevBtn">
+                <img src="../assets/images/pintu/back-index.png" alt="返回首页" class="side-btn" id="homeNextBtn">
+            </div>
+        </div>
+
+        <div class="nav-wrap">
+            <div class="progress-bar-box">
+                <div class="progress-item" data-name="首页" data-href="../index.html"></div>
+                <div class="progress-item" data-name="引言" data-href="./intro.html"></div>
+                <div class="progress-item" data-name="历史溯源" data-href="./history.html"></div>
+                <div class="progress-item" data-name="工艺制作" data-href="./craft.html"></div>
+                <div class="progress-item" data-name="流派特色" data-href="./style.html"></div>
+                <div class="progress-item" data-name="光影新创" data-href="./innovation.html"></div>
+                <div class="progress-item" data-name="互动体验" data-href="./pintu.html">
+                    <div class="nav-fox"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal-content">
+                <div class="modal-title">恭喜你！<br>完成拼图！</div>
+                <div class="modal-info">
+                    用　　时：<span id="useTime">0</span> 秒<br>
+                    完成度：100%<br>
+                    评　　分：优秀
+                </div>
+                <img src="../assets/images/pintu/next.png" alt="重新挑战" class="modal-next-btn" id="nextBtn">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const totalNum = 9;
+        const imgNameList = [
+            "pintu1-1", "pintu1-2", "pintu1-3",
+            "pintu2-1", "pintu2-2", "pintu2-3",
+            "pintu3-1", "pintu3-2", "pintu3-3"
+        ];
+        let puzzleArr = [];
+        let startTime = null;
+        let dragFromIndex = null;
+
+        const canvas = document.getElementById('puzzleCanvas');
+        const useTimeDom = document.getElementById('useTime');
+
+        document.addEventListener('DOMContentLoaded', initPuzzle);
+
+        function initPuzzle() {
+            puzzleArr = [0,1,2,3,4,5,6,7,8];
+            shuffleArray(puzzleArr);
+            renderPuzzle();
+            startTime = Date.now();
+        }
+
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+        }
+
+        function renderPuzzle() {
+            canvas.innerHTML = '';
+            puzzleArr.forEach((num, index) => {
+                const item = document.createElement('div');
+                item.className = 'puzzle-item';
+                item.dataset.order = num;
+                item.dataset.index = index;
+                item.style.backgroundImage = `url(../assets/images/pintu/${imgNameList[num]}.png)`;
+                item.draggable = true;
+                item.addEventListener('dragstart', dragStart);
+                item.addEventListener('dragover', e => e.preventDefault());
+                item.addEventListener('drop', dropSwap);
+                canvas.appendChild(item);
+            });
+        }
+
+        function dragStart(e){
+            dragFromIndex = parseInt(this.dataset.index);
+        }
+
+        function dropSwap(e){
+            e.preventDefault();
+            const toIndex = parseInt(this.dataset.index);
+            const f = dragFromIndex;
+            let isNear = false;
+            if(f % 3 !== 0 && toIndex === f - 1) isNear = true;
+            if((f + 1) % 3 !== 0 && toIndex === f + 1) isNear = true;
+            if(f - 3 >= 0 && toIndex === f - 3) isNear = true;
+            if(f + 3 < 9 && toIndex === f + 3) isNear = true;
+
+            if(isNear){
+                [puzzleArr[f], puzzleArr[toIndex]] = [puzzleArr[toIndex], puzzleArr[f]];
+                renderPuzzle();
+                checkComplete();
+            }
+        }
+
+        function checkComplete() {
+            const correct = [0,1,2,3,4,5,6,7,8];
+            return puzzleArr.every((v, i) => v === correct[i]);
+        }
+
+        document.getElementById('completeBtn').addEventListener('click', function () {
+            if (!checkComplete()) {
+                alert('拼图还未完成，请继续调整！');
+                return;
+            }
+            const cost = Math.floor((Date.now() - startTime) / 1000);
+            useTimeDom.innerText = cost;
+            document.getElementById('modalOverlay').classList.add('active');
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', function () {
+            document.getElementById('modalOverlay').classList.remove('active');
+            initPuzzle();
+        });
+
+        document.getElementById('homeNextBtn').addEventListener('click', function () {
+            window.location.href = "../index.html";
+        });
+
+        document.getElementById('prevBtn').addEventListener('click', function () {
+            window.location.href = "./innovation.html";
+        });
+
+        document.getElementById('modalOverlay').addEventListener('click', function (e) {
+            if (e.target === this) {
+                this.classList.remove('active');
+            }
+        });
+
+        const items = document.querySelectorAll('.progress-item');
+        const fox = document.querySelector('.nav-fox');
+        const total = items.length;
+        const curIndex = 6;
+        function moveFox(idx) {
+            const per = 100 / total;
+            fox.style.left = per * idx + per / 2 + '%';
+        }
+        moveFox(curIndex);
+        items.forEach((item, idx)=>{
+            item.onclick = function(e){
+                e.stopPropagation();
+                moveFox(idx);
+                setTimeout(()=>window.location.href=this.dataset.href,300)
+            }
+        })
+    </script>
+</body>
+</html>
