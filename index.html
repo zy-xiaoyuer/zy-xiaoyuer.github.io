@@ -152,7 +152,7 @@
 
 <body>
     <div class="app-wrap" onclick="goNext()">
-        <img src="./assets/images/title.png" alt="华影录" class="title-img">
+        <img src="./assets/images/title.png" alt="华影录" class="title-img" decoding="async" loading="lazy">
 
         <div class="rotate-box">
             <div class="circle-border"></div>
@@ -175,6 +175,9 @@
             </div>
         </div>
     </div>
+
+    <!-- 缓存进度提示 -->
+    <div id="preloadTip" style="position:fixed;bottom:12vh;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.65);color:#fff;padding:7px 14px;border-radius:99px;font-size:clamp(11px,2.8vw,13px);display:none;z-index:999;letter-spacing:1px;">素材缓存中 0%</div>
 
     <script>
         const items = document.querySelectorAll('.progress-item');
@@ -202,6 +205,98 @@
                 },300)
             }
         })
+    </script>
+
+    <!-- 全页面图片异步预加载脚本 -->
+    <script>
+        const allImageList = [
+            // 全局公共图
+            "./assets/images/bg-paper.png",
+            "./assets/images/icon.png",
+            "./assets/images/circle-border.png",
+            "./assets/images/fox.png",
+            "./assets/images/title.png",
+            "./assets/images/btn-prev.png",
+            // 引言 intro
+            "./assets/images/intro/xxx.png",
+            // 历史 history
+            "./assets/images/history/xxx.png",
+            // 工艺 craft
+            "./assets/images/craft/xxx.png",
+            // 流派 school
+            "./assets/images/school/xxx.png",
+            // 光影创新 innovation
+            "./assets/images/innovation/innovation-title.png",
+            "./assets/images/innovation/ctpy-gray.png",
+            "./assets/images/innovation/cxpy-gray.png",
+            "./assets/images/innovation/ctpy.png",
+            "./assets/images/innovation/cxpy.png",
+            "./assets/images/innovation/light.png",
+            "./assets/images/innovation/kouhao.png",
+            // 拼图 pintu
+            "./assets/images/pintu/pt-title.png",
+            "./assets/images/pintu/finish.png",
+            "./assets/images/pintu/back-index.png",
+            "./assets/images/pintu/next.png",
+            "./assets/images/pintu/pintu1-1.png",
+            "./assets/images/pintu/pintu1-2.png",
+            "./assets/images/pintu/pintu1-3.png",
+            "./assets/images/pintu/pintu2-1.png",
+            "./assets/images/pintu/pintu2-2.png",
+            "./assets/images/pintu/pintu2-3.png",
+            "./assets/images/pintu/pintu3-1.png",
+            "./assets/images/pintu/pintu3-2.png",
+            "./assets/images/pintu/pintu3-3.png"
+        ];
+
+        const tipDom = document.getElementById("preloadTip");
+
+        function loadSingleImg(src, retryCount = 2) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.decoding = "async";
+                img.src = src;
+                img.onload = () => resolve(true);
+                img.onerror = async () => {
+                    if (retryCount > 0) {
+                        await new Promise(res => setTimeout(res, 600));
+                        resolve(loadSingleImg(src, retryCount - 1));
+                    } else {
+                        resolve(false);
+                    }
+                };
+            });
+        }
+
+        async function preloadAllImages() {
+            tipDom.style.display = "block";
+            const batchLimit = 6;
+            let current = 0;
+            const total = allImageList.length;
+
+            while (current < total) {
+                const batchArr = allImageList.slice(current, current + batchLimit);
+                await Promise.all(batchArr.map(url => loadSingleImg(url)));
+                current += batchLimit;
+                const percent = Math.round((current / total) * 100);
+                tipDom.innerText = `素材缓存中 ${percent}%`;
+                await new Promise(res => setTimeout(res, 300));
+            }
+            tipDom.innerText = "素材缓存完成";
+            setTimeout(() => {
+                tipDom.style.display = "none";
+            }, 1200);
+        }
+
+        window.addEventListener("load", () => {
+            setTimeout(preloadAllImages, 1000);
+        });
+
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) {
+                window.stop();
+            }
+        });
     </script>
 </body>
 </html>
