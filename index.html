@@ -2,7 +2,8 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=430, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- 完整移动端适配，刘海/底部安全区 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>华影录</title>
     <style>
         * {
@@ -13,15 +14,21 @@
 
         html, body {
             width: 100%;
-            height: 100%;
+            height: 100vh;
+            overflow: hidden; /* 全局禁止滚动 */
             background: #333;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
+
+        /* 核心：以屏幕高度为基准，强制一屏容纳全部内容，比例430:932 */
         .app-wrap{
-            width: 430px;
-            height: 932px;
+            max-width: 430px;
+            max-height: 932px;
+            width: min(100vw, calc(100vh * 430 / 932));
+            height: min(100vh, calc(100vw * 932 / 430));
             overflow: hidden;
             position: relative;
             background-color: #f5efe0;
@@ -29,31 +36,31 @@
             background-size: cover;
             background-position: center top;
             background-repeat: no-repeat;
-            background-attachment: fixed;
+            cursor: pointer;
+            /* 改用百分比内边距，动态适配高度，删除固定大padding-bottom */
+            padding: 4vh 2vw calc(12vh + env(safe-area-inset-bottom));
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            padding-bottom: 160px;
+            justify-content: space-around; /* 自动均分垂直空间，不会撑高 */
         }
 
         .title-img {
-            width: 220px;
+            width: clamp(140px, 32vw, 220px);
             height: auto;
-            margin-bottom: 100px;
             object-fit: contain;
-            margin-top: 30px
+            margin-top: 0;
+            margin-bottom: 2vh;
         }
 
         .rotate-box {
             position: relative;
-            width: 280px;
-            height: 280px;
+            width: clamp(160px, 58vw, 280px);
+            height: clamp(160px, 58vw, 280px);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 60px;
+            margin-bottom: 2vh;
         }
 
         .circle-border {
@@ -68,8 +75,8 @@
         }
 
         .fox-img {
-            width: 190px;
-            height: 190px;
+            width: 68%;
+            height: 68%;
             background-image: url("./assets/images/fox.png");
             background-size: contain;
             background-repeat: no-repeat;
@@ -78,11 +85,11 @@
         }
 
         .tip {
-            margin-top: 100px;
-            font-size: 18px;
+            font-size: clamp(12px, 3vw, 18px);
             color: #d85a6a;
             opacity: 0.9;
             letter-spacing: 2px;
+            margin-top: 1vh;
         }
 
         @keyframes rotate {
@@ -97,7 +104,7 @@
 
         .nav-wrap {
             position: absolute;
-            bottom: 35px;
+            bottom: calc(3vh + env(safe-area-inset-bottom));
             left: 0;
             width: 100%;
             padding: 0 12px;
@@ -120,8 +127,8 @@
         }
 
         .nav-fox {
-            width: 36px;
-            height: 36px;
+            width: clamp(24px,7vw,36px);
+            height: clamp(24px,7vw,36px);
             background-image: url("./assets/images/icon.png");
             background-size: contain;
             background-repeat: no-repeat;
@@ -136,11 +143,11 @@
         .progress-item::after {
             content: attr(data-name);
             position: absolute;
-            top: 22px;
+            top: 20px;
             left: 50%;
             transform: translateX(-50%);
             white-space: nowrap;
-            font-size: 11px;
+            font-size: clamp(8px,2vw,11px);
             color: #553e2c;
         }
     </style>
