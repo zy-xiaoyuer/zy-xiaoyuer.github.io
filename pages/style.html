@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>流派特色 - 华影录</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            background: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+        .app-wrap{
+            max-width: 430px;
+            max-height: 932px;
+            width: min(100vw, calc(100vh * 430 / 932));
+            height: min(100vh, calc(100vw * 932 / 430));
+            overflow: hidden;
+            position: relative;
+            background-color: #f5efe0;
+            background-image: url("../assets/images/bg-paper.png");
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+            padding: 6vh 2vw calc(14vh + env(safe-area-inset-bottom));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .school-title {
+            width: clamp(200px,80%,320px);
+            height: auto;
+            margin-bottom: 3vh;
+            animation: zMove 4s ease-in-out infinite alternate;
+        }
+        @keyframes zMove {
+            0% { transform: translateX(-15px); }
+            100% { transform: translateX(15px); }
+        }
+
+        .school-tabs {
+            width: clamp(240px,82%,310px);
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: clamp(12px,2vh,18px);
+        }
+        .school-tab-btn {
+            width: clamp(65px,22vw,92px);
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .school-tab-btn:active {
+            transform: scale(0.95);
+        }
+
+        .school-content {
+            width: clamp(240px,82%,310px);
+            flex: 1;
+            position: relative;
+            margin: auto 0;
+            overflow: hidden;
+        }
+
+        .school-page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: clamp(8px,1.8vh,12px);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-35px);
+            transition: all 0.7s ease-out;
+        }
+        .school-page.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .school-info {
+            width: 100%;
+            height: auto;
+        }
+        .school-middle {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .school-py {
+            width: auto;
+            height: clamp(130px,22vh,195px);
+        }
+        .school-icon {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            height: clamp(70px,12vh,105px);
+            width: auto;
+        }
+
+        .nav-buttons {
+            width: 100%;
+            max-width: 320px;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+            margin-top:3vh;
+        }
+        .btn {
+            width: clamp(100px,32vw,130px);
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .btn:active {
+            transform: scale(0.92);
+        }
+
+        @keyframes run {
+            0% { transform: translateX(-50%) translateY(0) rotate(-5deg); }
+            50% { transform: translateX(-50%) translateY(-4px) rotate(5deg); }
+            100% { transform: translateX(-50%) translateY(0) rotate(-5deg); }
+        }
+        .nav-wrap {
+            position: absolute;
+            bottom: calc(3vh + env(safe-area-inset-bottom));
+            left: 0;
+            width: 100%;
+            padding: 0 12px;
+        }
+        .progress-bar-box {
+            width: 100%;
+            max-width: 400px;
+            height: 10px;
+            background: #c9b99c;
+            border-radius: 99px;
+            display: flex;
+            margin: 0 auto;
+            position: relative;
+        }
+        .progress-item {
+            flex: 1;
+            height: 100%;
+            cursor: pointer;
+            position: relative;
+        }
+        .nav-fox {
+            width: clamp(24px,7vw,36px);
+            height: clamp(24px,7vw,36px);
+            background-image: url("../assets/images/icon.png");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            position: absolute;
+            bottom: 10px;
+            z-index: 2;
+            transition: left 0.5s ease;
+            animation: run 0.35s infinite ease-in-out;
+        }
+        .progress-item::after {
+            content: attr(data-name);
+            position: absolute;
+            top: 22px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: clamp(8px,2vw,11px);
+            color: #553e2c;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-wrap">
+        <img src="../assets/images/school/title-school.png" alt="一方水土 一方灯影" class="school-title">
+
+        <div class="school-tabs">
+            <img src="../assets/images/school/tab1.png" id="tab1" class="school-tab-btn" onclick="switchTab(1)">
+            <img src="../assets/images/school/tab2-gray.png" id="tab2" class="school-tab-btn" onclick="switchTab(2)">
+            <img src="../assets/images/school/tab3-gray.png" id="tab3" class="school-tab-btn" onclick="switchTab(3)">
+        </div>
+
+        <div class="school-content">
+            <div class="school-page active" id="page1">
+                <img src="../assets/images/school/sx-info.png" class="school-info">
+                <div class="school-middle">
+                    <img src="../assets/images/school/sx-py.png" class="school-py">
+                    <img src="../assets/images/school/sx-icon.png" class="school-icon">
+                </div>
+            </div>
+            <div class="school-page" id="page2">
+                <img src="../assets/images/school/ts-info.png" class="school-info">
+                <div class="school-middle">
+                    <img src="../assets/images/school/ts-py.png" class="school-py">
+                    <img src="../assets/images/school/ts-icon.png" class="school-icon">
+                </div>
+            </div>
+            <div class="school-page" id="page3">
+                <img src="../assets/images/school/sc-info.png" class="school-info">
+                <div class="school-middle">
+                    <img src="../assets/images/school/sc-py.png" class="school-py">
+                    <img src="../assets/images/school/sc-icon.png" class="school-icon">
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <img src="../assets/images/btn-prev.png" class="btn" onclick="goPrev()">
+            <img src="../assets/images/btn-next.png" class="btn" onclick="nextSchoolStep()">
+        </div>
+
+        <div class="nav-wrap">
+            <div class="progress-bar-box">
+                <div class="progress-item" data-name="首页" data-href="../index.html"></div>
+                <div class="progress-item" data-name="引言" data-href="./intro.html"></div>
+                <div class="progress-item" data-name="历史溯源" data-href="./history.html"></div>
+                <div class="progress-item" data-name="工艺制作" data-href="./craft.html"></div>
+                <div class="progress-item" data-name="流派特色" data-href="./style.html">
+                    <div class="nav-fox"></div>
+                </div>
+                <div class="progress-item" data-name="光影新创" data-href="./innovation.html"></div>
+                <div class="progress-item" data-name="互动体验" data-href="./pintu.html"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let activeTab = 1;
+        function switchTab(tabNum) {
+            activeTab = tabNum;
+            document.getElementById('tab1').src = "../assets/images/school/tab1-gray.png";
+            document.getElementById('tab2').src = "../assets/images/school/tab2-gray.png";
+            document.getElementById('tab3').src = "../assets/images/school/tab3-gray.png";
+            if (tabNum === 1) document.getElementById('tab1').src = "../assets/images/school/tab1.png";
+            if (tabNum === 2) document.getElementById('tab2').src = "../assets/images/school/tab2.png";
+            if (tabNum === 3) document.getElementById('tab3').src = "../assets/images/school/tab3.png";
+
+            document.querySelectorAll('.school-page').forEach(el => el.classList.remove('active'));
+            setTimeout(()=>{
+                document.getElementById('page' + tabNum).classList.add('active');
+            },60)
+        }
+        function nextSchoolStep() {
+            let nextTab = activeTab + 1;
+            if (nextTab <= 3) switchTab(nextTab);
+            else window.location.href = "./innovation.html";
+        }
+        function goPrev() {
+            window.location.href = "./craft.html";
+        }
+
+        const items = document.querySelectorAll('.progress-item');
+        const fox = document.querySelector('.nav-fox');
+        const total = items.length;
+        const curIndex = 4;
+        function moveFox(idx) {
+            const per = 100 / total;
+            fox.style.left = per * idx + per / 2 + '%';
+        }
+        moveFox(curIndex);
+        items.forEach((item, idx)=>{
+            item.onclick = function(e){
+                e.stopPropagation();
+                moveFox(idx);
+                setTimeout(()=>window.location.href=this.dataset.href,300)
+            }
+        })
+    </script>
+</body>
+</html>

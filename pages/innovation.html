@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>光影新创 - 华影录</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            background: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+        .app-wrap {
+            max-width: 430px;
+            max-height: 932px;
+            width: min(100vw, calc(100vh * 430 / 932));
+            height: min(100vh, calc(100vw * 932 / 430));
+            overflow: hidden;
+            position: relative;
+            background-color: #f5efe0;
+            background-image: url("../assets/images/bg-paper.png");
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+            padding: 6vh 2vw calc(14vh + env(safe-area-inset-bottom));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .innovation-title {
+            width: clamp(200px,80%,320px);
+            height: auto;
+            margin-bottom: 3vh;
+            animation: zMove 4s ease-in-out infinite alternate;
+        }
+        @keyframes zMove {
+            0% { transform: translateX(-15px); }
+            100% { transform: translateX(15px); }
+        }
+
+        .innovation-tabs {
+            width: clamp(240px,82%,310px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: clamp(12px,2vh,18px);
+            position: relative;
+            height: clamp(80px,14vh,110px);
+        }
+        .dash-line {
+            width: 1px;
+            height: 80%;
+            border-left: 1px dashed #999;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+        .innovation-tab-btn {
+            width: clamp(65px,22vw,92px);
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+        .innovation-tab-btn:active {
+            transform: scale(0.95);
+        }
+
+        .innovation-content {
+            width: clamp(240px,82%,310px);
+            flex: 1;
+            position: relative;
+            margin: auto 0;
+        }
+        .tip-light {
+            text-align: center;
+            font-size: clamp(12px,3vw,16px);
+            color: #775439;
+            margin-bottom: clamp(8px,2vh,14px);
+            letter-spacing: 1px;
+        }
+        .innovation-page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .innovation-img {
+            width: 88%;
+            height: auto;
+            transition: transform 0.6s ease;
+            transform: rotate(0deg);
+        }
+        .rotate-left {
+            transform: rotate(-45deg);
+        }
+        .rotate-right {
+            transform: rotate(45deg);
+        }
+
+        .kouhao-img {
+            width: clamp(240px,82%,310px);
+            height: auto;
+            margin-bottom: clamp(10px,1.8vh,16px);
+        }
+
+        .nav-buttons {
+            width: 100%;
+            max-width: 320px;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+            margin-top:3vh;
+        }
+        .btn {
+            width: clamp(100px,32vw,130px);
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .btn:active {
+            transform: scale(0.92);
+        }
+
+        @keyframes run {
+            0% { transform: translateX(-50%) translateY(0) rotate(-5deg); }
+            50% { transform: translateX(-50%) translateY(-4px) rotate(5deg); }
+            100% { transform: translateX(-50%) translateY(0) rotate(-5deg); }
+        }
+        .nav-wrap {
+            position: absolute;
+            bottom: calc(3vh + env(safe-area-inset-bottom));
+            left: 0;
+            width: 100%;
+            padding: 0 12px;
+        }
+        .progress-bar-box {
+            width: 100%;
+            max-width: 400px;
+            height: 10px;
+            background: #c9b99c;
+            border-radius: 99px;
+            display: flex;
+            margin: 0 auto;
+            position: relative;
+        }
+        .progress-item {
+            flex: 1;
+            height: 100%;
+            cursor: pointer;
+            position: relative;
+        }
+        .nav-fox {
+            width: clamp(24px,7vw,36px);
+            height: clamp(24px,7vw,36px);
+            background-image: url("../assets/images/icon.png");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            position: absolute;
+            bottom: 10px;
+            z-index: 2;
+            transition: left 0.5s ease;
+            animation: run 0.35s infinite ease-in-out;
+        }
+        .progress-item::after {
+            content: attr(data-name);
+            position: absolute;
+            top: 22px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: clamp(8px,2vw,11px);
+            color: #553e2c;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-wrap">
+        <img src="../assets/images/innovation/innovation-title.png" alt="旧影新编 童年归影" class="innovation-title">
+
+        <div class="innovation-content">
+            <div class="innovation-page active" id="innovation-page1">
+                <p class="tip-light">点击皮影点亮它</p>
+                <img src="../assets/images/innovation/light.png" class="innovation-img" id="light">
+            </div>
+        </div>
+
+        <div class="innovation-tabs">
+            <div class="dash-line"></div>
+            <img src="../assets/images/innovation/ctpy-gray.png" id="tab1" class="innovation-tab-btn" onclick="switchTab(1)">
+            <img src="../assets/images/innovation/cxpy-gray.png" id="tab2" class="innovation-tab-btn" onclick="switchTab(2)">
+        </div>
+
+        <img src="../assets/images/innovation/kouhao.png" class="kouhao-img">
+
+        <div class="nav-buttons">
+            <img src="../assets/images/btn-prev.png" class="btn" onclick="prevPage()">
+            <img src="../assets/images/btn-next.png" class="btn" onclick="nextPage()">
+        </div>
+
+        <div class="nav-wrap">
+            <div class="progress-bar-box">
+                <div class="progress-item" data-name="首页" data-href="../index.html"></div>
+                <div class="progress-item" data-name="引言" data-href="./intro.html"></div>
+                <div class="progress-item" data-name="历史溯源" data-href="./history.html"></div>
+                <div class="progress-item" data-name="工艺制作" data-href="./craft.html"></div>
+                <div class="progress-item" data-name="流派特色" data-href="./style.html"></div>
+                <div class="progress-item" data-name="光影新创" data-href="./innovation.html">
+                    <div class="nav-fox"></div>
+                </div>
+                <div class="progress-item" data-name="互动体验" data-href="./pintu.html"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        let activeTab = 0;
+
+        function switchTab(tabNum) {
+            activeTab = tabNum;
+            document.getElementById('tab1').src = "../assets/images/innovation/ctpy-gray.png";
+            document.getElementById('tab2').src = "../assets/images/innovation/cxpy-gray.png";
+            let light = document.getElementById('light');
+            light.classList.remove('rotate-left', 'rotate-right');
+
+            if (tabNum === 1) {
+                document.getElementById('tab1').src = "../assets/images/innovation/ctpy.png";
+                light.classList.add('rotate-right');
+            } else if (tabNum === 2) {
+                document.getElementById('tab2').src = "../assets/images/innovation/cxpy.png";
+                light.classList.add('rotate-left');
+            }
+        }
+        function nextPage() {
+            window.location.href = "./pintu.html";
+        }
+        function prevPage() {
+            window.location.href = "./style.html";
+        }
+
+        const items = document.querySelectorAll('.progress-item');
+        const fox = document.querySelector('.nav-fox');
+        const total = items.length;
+        const curIndex = 5;
+        function moveFox(idx) {
+            const per = 100 / total;
+            fox.style.left = per * idx + per / 2 + '%';
+        }
+        moveFox(curIndex);
+        items.forEach((item, idx) => {
+            item.onclick = function (e) {
+                e.stopPropagation();
+                moveFox(idx);
+                setTimeout(() => window.location.href = this.dataset.href, 300);
+            }
+        })
+    </script>
+</body>
+</html>
