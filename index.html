@@ -13,7 +13,7 @@
 
         html, body {
             width: 100%;
-            height: 100vh;
+            height: 100%;
             overflow: hidden;
             background: #333;
             display: flex;
@@ -26,16 +26,17 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             background-color: #f5efe0;
-            z-index: 9999;
+            z-index: 99999;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 4vh;
             transition: opacity 0.8s ease;
+            will-change: transform, opacity;
         }
         .loading-mask.hide {
             opacity: 0;
@@ -77,8 +78,8 @@
             align-items: center;
             justify-content: space-around;
             opacity: 0;
-            transition: opacity 0.8s ease;
             pointer-events: none;
+            transition: opacity 0.8s ease;
         }
         .app-wrap.show {
             opacity: 1;
