@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>华影录</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            background: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        .loading-mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f5efe0;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4vh;
+            transition: opacity 0.8s ease;
+        }
+        .loading-mask.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .loading-circle {
+            width: clamp(80px, 24vw, 140px);
+            height: clamp(80px, 24vw, 140px);
+            border: 4px solid #e0d8c8;
+            border-top-color: #d85a6a;
+            border-radius: 50%;
+            animation: spin 1.2s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .loading-text {
+            font-size: clamp(14px, 4vw, 20px);
+            color: #553e2c;
+            letter-spacing: 2px;
+        }
+
+        .app-wrap{
+            max-width: 430px;
+            max-height: 932px;
+            width: min(100vw, calc(100vh * 430 / 932));
+            height: min(100vh, calc(100vw * 932 / 430));
+            overflow: hidden;
+            position: relative;
+            background-color: #f5efe0;
+            background-image: url("./assets/images/bg-paper.png");
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+            cursor: pointer;
+            padding: 4vh 2vw calc(12vh + env(safe-area-inset-bottom));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            pointer-events: none;
+        }
+        .app-wrap.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .title-img {
+            width: clamp(140px, 32vw, 220px);
+            height: auto;
+            object-fit: contain;
+            margin-top: 0;
+            margin-bottom: 2vh;
+        }
+
+        .rotate-box {
+            position: relative;
+            width: clamp(160px, 58vw, 280px);
+            height: clamp(160px, 58vw, 280px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2vh;
+        }
+
+        .circle-border {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: url("./assets/images/circle-border.png");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            animation: rotate 12s linear infinite;
+        }
+
+        .fox-img {
+            width: 68%;
+            height: 68%;
+            background-image: url("./assets/images/fox.png");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: 2;
+        }
+
+        .tip {
+            font-size: clamp(12px, 3vw, 18px);
+            color: #d85a6a;
+            opacity: 0.9;
+            letter-spacing: 2px;
+            margin-top: 1vh;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes run {
+            0% { transform: translateX(-50%) translateY(0) rotate(-5deg); }
+            50% { transform: translateX(-50%) translateY(-4px) rotate(5deg); }
+            100% { transform: translateX(-50%) translateY(0) rotate(-5deg); }
+        }
+
+        .nav-wrap {
+            position: absolute;
+            bottom: calc(3vh + env(safe-area-inset-bottom));
+            left: 0;
+            width: 100%;
+            padding: 0 12px;
+        }
+        .progress-bar-box {
+            width: 100%;
+            max-width: 400px;
+            height: 10px;
+            background: #c9b99c;
+            border-radius: 99px;
+            display: flex;
+            margin: 0 auto;
+            position: relative;
+        }
+        .progress-item {
+            flex: 1;
+            height: 100%;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .nav-fox {
+            width: clamp(24px,7vw,36px);
+            height: clamp(24px,7vw,36px);
+            background-image: url("./assets/images/icon.png");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            position: absolute;
+            left: calc(100% / 7 / 2);
+            bottom: 10px;
+            z-index: 2;
+            animation: run 0.35s infinite ease-in-out;
+            transition: left 0.5s ease;
+        }
+        .progress-item::after {
+            content: attr(data-name);
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: clamp(8px,2vw,11px);
+            color: #553e2c;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="loading-mask" id="loadingMask">
+        <div class="loading-circle"></div>
+        <div class="loading-text" id="loadText">正在加载素材 0%</div>
+    </div>
+
+    <div class="app-wrap" id="mainWrap" onclick="goNext()">
+        <img src="./assets/images/title.png" alt="华影录" class="title-img" decoding="async" loading="lazy">
+
+        <div class="rotate-box">
+            <div class="circle-border"></div>
+            <div class="fox-img"></div>
+        </div>
+
+        <p class="tip">——点击任意区域跳转——</p>
+
+        <div class="nav-wrap">
+            <div class="progress-bar-box">
+                <div class="progress-item" data-name="首页" data-href="./index.html">
+                    <div class="nav-fox"></div>
+                </div>
+                <div class="progress-item" data-name="引言" data-href="./pages/intro.html"></div>
+                <div class="progress-item" data-name="历史溯源" data-href="./pages/history.html"></div>
+                <div class="progress-item" data-name="工艺制作" data-href="./pages/craft.html"></div>
+                <div class="progress-item" data-name="流派特色" data-href="./pages/style.html"></div>
+                <div class="progress-item" data-name="光影新创" data-href="./pages/innovation.html"></div>
+                <div class="progress-item" data-name="互动体验" data-href="./pages/pintu.html"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let preloadLocked = true;
+        const items = document.querySelectorAll('.progress-item');
+        const fox = document.querySelector('.nav-fox');
+        const total = items.length;
+        const loadingMask = document.getElementById('loadingMask');
+        const mainWrap = document.getElementById('mainWrap');
+        const loadText = document.getElementById('loadText');
+
+        function moveFox(idx) {
+            const per = 100 / total;
+            fox.style.left = per * idx + per / 2 + '%';
+        }
+        moveFox(0);
+
+        function goNext() {
+            if(preloadLocked) return;
+            window.location.href = "./pages/intro.html";
+        }
+
+        items.forEach((item, idx)=>{
+            item.onclick = function(e){
+                e.stopPropagation();
+                if(preloadLocked) return;
+                moveFox(idx);
+                setTimeout(()=>{
+                    const link = this.dataset.href;
+                    window.location.href = link;
+                },300)
+            }
+        })
+    </script>
+
+    <script>
+        const allImageList = [
+            "./assets/images/bg-paper.png",
+            "./assets/images/icon.png",
+            "./assets/images/circle-border.png",
+            "./assets/images/fox.png",
+            "./assets/images/title.png",
+            "./assets/images/btn-prev.png",
+            "./assets/images/intro/xxx.png",
+            "./assets/images/history/xxx.png",
+            "./assets/images/craft/xxx.png",
+            "./assets/images/school/xxx.png",
+            "./assets/images/innovation/innovation-title.png",
+            "./assets/images/innovation/ctpy-gray.png",
+            "./assets/images/innovation/cxpy-gray.png",
+            "./assets/images/innovation/ctpy.png",
+            "./assets/images/innovation/cxpy.png",
+            "./assets/images/innovation/light.png",
+            "./assets/images/innovation/kouhao.png",
+            "./assets/images/pintu/pt-title.png",
+            "./assets/images/pintu/finish.png",
+            "./assets/images/pintu/back-index.png",
+            "./assets/images/pintu/next.png",
+            "./assets/images/pintu/pintu1-1.png",
+            "./assets/images/pintu/pintu1-2.png",
+            "./assets/images/pintu/pintu1-3.png",
+            "./assets/images/pintu/pintu2-1.png",
+            "./assets/images/pintu/pintu2-2.png",
+            "./assets/images/pintu/pintu2-3.png",
+            "./assets/images/pintu/pintu3-1.png",
+            "./assets/images/pintu/pintu3-2.png",
+            "./assets/images/pintu/pintu3-3.png"
+        ];
+
+        function loadSingleImg(src, retryCount = 2) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.decoding = "async";
+                img.src = src;
+                img.onload = () => resolve(true);
+                img.onerror = async () => {
+                    if (retryCount > 0) {
+                        await new Promise(res => setTimeout(res, 600));
+                        resolve(loadSingleImg(src, retryCount - 1));
+                    } else {
+                        resolve(false);
+                    }
+                };
+            });
+        }
+
+        async function preloadAllImages() {
+            const batchLimit = 6;
+            let current = 0;
+            const total = allImageList.length;
+
+            while (current < total) {
+                const batchArr = allImageList.slice(current, current + batchLimit);
+                await Promise.all(batchArr.map(url => loadSingleImg(url)));
+                current += batchLimit;
+                const percent = Math.round((current / total) * 100);
+                loadText.innerText = `正在加载素材 ${percent}%`;
+                await new Promise(res => setTimeout(res, 300));
+            }
+
+            loadText.innerText = "素材加载完成";
+            preloadLocked = false;
+            setTimeout(() => {
+                loadingMask.classList.add('hide');
+                mainWrap.classList.add('show');
+            }, 1000);
+        }
+
+        document.addEventListener('DOMContentLoaded', preloadAllImages);
+
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) window.stop();
+        });
+    </script>
+</body>
+</html>
